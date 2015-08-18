@@ -1,0 +1,429 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.courseDetails.title']}</ui:define>
+
+	<ui:define name="pageTitle">#{lbl['pages.courseDetails.header']}</ui:define>
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#my_courses_menu_item");
+		</script>
+
+		<section class="full-section latest-courses-section no-slider">
+			<h:form id="semCourseForm">
+				
+				<div class="container">
+					<h:panelGroup layout="block" styleClass="col-md-12">
+						<div class="course clearfix">
+							<div class="course-info">
+								<h3 class="course-title large-course-title ln-tr">#{courseDetailsBean.semesterCourse.course.courseIdentifier} - #{courseDetailsBean.semesterCourse.course.courseName}</h3>
+								<p class="course-description">#{courseDetailsBean.semesterCourse.course.longDescription}</p>
+								
+								<h:panelGroup layout="block" styleClass="buttons fr"
+										style="display: flex;">
+									<p:commandButton update=":growl"
+										value="#{lbl['courseDetails.label.classMates']}" oncomplete="openModal('#students-modal')"
+										styleClass="submit-input grad-btn ln-tr width-200" />
+									<p:commandButton update=":growl :gamificationForm"
+										value="#{lbl['courseList.label.gamificationSettings']}" oncomplete="openModal('#gamification-modal')"
+										actionListener="#{courseDetailsBean.prepareGamificationSettings()}"
+										styleClass="submit-input grad-btn ln-tr width-200" />
+								</h:panelGroup>
+							</div>
+						</div>
+					</h:panelGroup>
+				</div>
+				
+				<p:tabView styleClass="container" style="margin-top: 30px;" id="courseTabs">
+					<p:tab title="#{lbl['courseDetails.label.courseDetailsTab']}">
+						<ui:repeat var="cp" value="#{courseDetailsBean.coursePlans}">
+							<h:panelGroup layout="block" styleClass="col-md-12" style="float: none !important;">
+								<div class="course clearfix">
+									<div class="course-info">
+										<h3 class="course-title ln-tr">#{cp.coursePlanTitle}</h3>
+										<p class="course-description">#{cp.description}</p>
+										
+										<h:panelGroup rendered="#{courseDetailsBean.isFilesRendered(cp)}">
+										
+											<p class="course-description" style="font-size: 16px; font-weight: bold; color: #fe9d68;">#{lbl['courseDetails.label.files']}</p>
+											
+											<div class="list list-download" style="margin-bottom: 16px;">
+												<ul>
+													<ui:repeat var="cm" value="#{cp.materials}">
+														<li>
+															<p:commandLink styleClass="document-link ln-tr" value="#{cm.document.filename}" ajax="false">
+																<p:fileDownload value="#{courseDetailsBean.downloadFile(cm.document)}" />
+															</p:commandLink>
+														
+														</li>
+													</ui:repeat>
+												</ul>
+											</div>
+										
+										</h:panelGroup>
+										
+										<h:panelGroup rendered="#{courseDetailsBean.isAssignmentsRendered(cp)}">
+										
+											<p class="course-description" style="font-size: 16px; font-weight: bold; color: #fe9d68;">#{lbl['courseDetails.label.assignments']}</p>
+											
+											<div class="list list-arrow-circle">
+												<ul>
+													<ui:repeat var="asgn" value="#{cp.assignments}">
+														<li>
+															<p:commandLink styleClass="document-link ln-tr" actionListener="#{courseDetailsBean.goToAssignment(asgn)}"  
+																value="#{asgn.name}" target="_blank"/>
+														
+														</li>
+													</ui:repeat>
+												</ul>
+											</div>
+										
+										</h:panelGroup>
+									</div>
+								</div>
+							</h:panelGroup>
+						</ui:repeat>
+					</p:tab>
+					
+					<p:tab title="#{lbl['gamificationSettings.label.leaderboardsTab']}" rendered="#{courseDetailsBean.settings.leaderboardsEnabled and courseDetailsBean.generalSettings.leaderboardsEnabled}">
+						<div class="col-md-12" style="float: none !important; margin-top: 0px;">
+							<div class="course clearfix">
+								<div class="course-info" style="text-align: center !important;">
+									<h:panelGrid columns="2" style="margin-left: auto; margin-right:auto;">
+										<h:outputText value="#{lbl['courseDetails.label.yourStanding']}" styleClass="title-text" />
+										<h:outputText value="#{courseDetailsBean.currentStudent.standing}" styleClass="title-text" />
+										
+										<h:outputText value="#{lbl['courseDetails.label.yourPoints']}" styleClass="title-text" />
+										<h:outputText value="#{courseDetailsBean.currentStudent.point}" styleClass="title-text" />
+									</h:panelGrid>
+									
+									<h:outputText value="#{lbl['courseDetails.label.leaderboardWarning']}" styleClass="regular-body-text" style="margin-top: 16px;"/>
+									<p:dataTable id="lbTable" var="lb" widgetVar="dtLbTable"
+												paginator="false" rows="100" 
+												emptyMessage="#{lbl['common.label.noRecordFound']}"
+												value="#{courseDetailsBean.leaderboardStudents}" rowKey="#{lb.standing}"
+												styleClass="borderless leaderboard-table" >
+										
+											<p:column headerText="#{lbl['leaderboards.label.standing']}" styleClass="standing-column">
+												<h:outputText value="#{lb.standing}" styleClass="d" />
+											</p:column>
+											
+											<p:column headerText="#{lbl['general.labels.username']}" styleClass="username-column">
+												<h:outputText value="#{lb.username}" styleClass="d" />
+											</p:column>
+											
+											<p:column headerText="#{lbl['leaderboards.label.points']}" styleClass="points-column">
+												<h:outputText value="#{lb.point}" styleClass="d" />
+											</p:column>
+									</p:dataTable>
+								</div>
+							</div>
+						</div>
+					</p:tab>
+					
+					<p:tab title="#{lbl['gamificationSettings.label.achievementsTab']}" rendered="#{courseDetailsBean.settings.achievementsEnabled and courseDetailsBean.generalSettings.achievementsEnabled}">
+						<ui:repeat var="ap" value="#{courseDetailsBean.progressedAchievements}">
+							<div class="col-md-12 latest-courses-content" style="float: none !important; margin-top: 0px;">
+		                        <div class="course clearfix">
+		                            <div class="course-image">
+		                                <img src="#{ap.achievement.encodedImage}" width="128" height="128" class="#{courseDetailsBean.getImageClass(ap)}" alt="" />
+		                            </div><!-- End Course Image -->
+		                            <div class="course-info achievements">
+		                                <h3 class="course-title">#{ap.achievement.name}</h3>
+		                                <p class="course-description">
+		                                    #{ap.achievement.description}
+		                                </p>
+		                                <p class="course-description achievement-objective">
+		                                    #{courseDetailsBean.stringifyObjective(ap.achievement)}
+		                                </p>
+		                                
+		                                <h:panelGroup layout="block" styleClass="course-description achievement-objective" rendered="#{!ap.isComplete() and courseDetailsBean.getProgress(ap) != 0}">
+		                                    #{lbl['courseDetails.label.achievementProgress']}: #{courseDetailsBean.getProgressString(ap)}
+		                                </h:panelGroup>
+		                            </div>
+		                            <div class="details fl achievements">
+		                                	<div class="progress-bar" aria-valuenow="#{courseDetailsBean.getProgress(ap)}" aria-valuemin="0" aria-valuemax="100" style="#{courseDetailsBean.getProgressStyle(ap)}">
+		                                    </div>
+		                                    
+		                                    <div class="point ib pr-ml">
+		                                        <span class="icon"><i class="fa fa-clock-o"></i></span>
+		                                        <span class="text">#{courseDetailsBean.getPointRewardString(ap.achievement)}</span>
+		                                    </div><!-- date icon -->
+		                                    <div class="badge ib pr-ml">
+		                                        <span class="icon"><i class="fa fa-map-marker"></i></span>
+		                                        <span class="text">#{courseDetailsBean.getBadgeRewardString(ap.achievement)}</span>
+		                                    </div><!-- place icon -->
+		                                    <div class="grade ib pr-ml">
+		                                        <span class="icon"><i class="fa fa-building"></i></span>
+		                                        <span class="text">#{courseDetailsBean.getGradeRewardString(ap.achievement)}</span>
+		                                    </div><!-- center icon -->
+		                                </div><!-- End Details Box -->
+		                        </div><!-- End Course -->
+		                    </div><!-- End col-md-12 -->
+	                    </ui:repeat>
+	                    
+	                    <ui:repeat var="ach" value="#{courseDetailsBean.filteredAchievements}">
+							<div class="col-md-12 latest-courses-content" style="float: none !important; margin-top: 0px;">
+		                        <div class="course clearfix">
+		                            <div class="course-image">
+		                                <img src="#{ach.encodedImage}" width="128" height="128" class="img-responsive incomplete-objective wh-128" alt="" />
+		                            </div><!-- End Course Image -->
+		                            <div class="course-info achievements">
+		                                <h3 class="course-title">#{ach.name}</h3>
+		                                <p class="course-description">
+		                                    #{ach.description}
+		                                </p>
+		                                <p class="course-description achievement-objective">
+		                                    #{courseDetailsBean.stringifyObjective(ach)}
+		                                </p>
+		                            </div>
+	                                <div class="details fl achievements">
+	                                    <div class="point ib pr-ml">
+	                                        <span class="icon"><i class="fa fa-clock-o"></i></span>
+	                                        <span class="text">#{courseDetailsBean.getPointRewardString(ach)}</span>
+	                                    </div><!-- date icon -->
+	                                    <div class="badge ib pr-ml">
+	                                        <span class="icon"><i class="fa fa-map-marker"></i></span>
+	                                        <span class="text">#{courseDetailsBean.getBadgeRewardString(ach)}</span>
+	                                    </div><!-- place icon -->
+	                                    <div class="grade ib pr-ml">
+	                                        <span class="icon"><i class="fa fa-building"></i></span>
+	                                        <span class="text">#{courseDetailsBean.getGradeRewardString(ach)}</span>
+	                                    </div><!-- center icon -->
+	                                </div><!-- End Details Box -->
+		                        </div><!-- End Course -->
+		                    </div><!-- End col-md-12 -->
+	                    </ui:repeat>
+					</p:tab>
+					
+					<p:tab title="#{lbl['gamificationSettings.label.badgesTab']}" rendered="#{courseDetailsBean.settings.badgesEnabled and courseDetailsBean.generalSettings.badgesEnabled}">
+						<p:dataGrid var="sb" value="#{courseDetailsBean.studentBadges}" columns="3" layout="grid"  paginator="true" id="badgeImageGrid1"
+					            	rows="25" paginatorAlwaysVisible="false" rendered="#{courseDetailsBean.studentBadgesRendered}">
+	                        <div class="course clearfix badge-wrapper">
+	                            <div class="course-image" style="float: left; margin-right: 8px;">
+	                                <img src="#{sb.badge.encodedImage}" width="128" height="128" class="img-responsive incomplete-objective wh-128" alt=""/>
+	                            </div><!-- End Course Image -->
+	                            <div class="course-info" style="padding: 0px;">
+	                                <h3 class="course-title">#{sb.badge.name}</h3>
+	                                <p class="course-description">
+	                                    #{sb.badge.description}
+	                                </p>
+	                            </div>
+	                        </div><!-- End Course -->
+	                    </p:dataGrid>
+	                    
+	                    <p:dataGrid var="bdg" value="#{courseDetailsBean.filteredBadges}" columns="3" layout="grid"  paginator="true" id="badgeImageGrid2"
+					            	rows="25" paginatorAlwaysVisible="false">
+	                        <div class="course clearfix badge-wrapper">
+	                            <div class="course-image" style="float: left; margin-right: 8px;">
+	                                <img src="${request.contextPath}/resources/assets/img/icons/padlock.png" width="128" height="128" class="img-responsive incomplete-objective wh-128" alt=""
+	                                	style="opacity: 0.35;"/>
+	                            </div><!-- End Course Image -->
+	                            <div class="course-info" style="padding: 0px;">
+	                                <h3 class="course-title">#{bdg.name}</h3>
+	                                <p class="course-description">
+	                                    #{bdg.description}
+	                                </p>
+	                            </div>
+	                        </div><!-- End Course -->
+	                    </p:dataGrid>
+					</p:tab>
+					
+					<p:tab title="#{lbl['courseDetails.label.grades']}">
+						<p:dataTable id="fgTable" widgetVar="dtFgTable"
+								paginator="false" rows="10"
+								emptyMessage="#{lbl['common.label.noRecordFound']}" 
+								value="#{courseDetailsBean.gradeStudents}" var="g" rowKey="#{g.student.id}"
+								styleClass="borderless light-header" >
+								
+								<p:column headerText="#{lbl['gradeManagement.label.type']}">
+									<h:outputText value="#{g.type}" styleClass="d" />
+								</p:column>
+								
+								<p:columns value="#{courseDetailsBean.examGradeColumns}" var="col">
+									<f:facet name="header">
+						                <h:outputText value="#{col.label}" />
+						            </f:facet>
+						            <h:outputText value="#{g.examGrades.get(col.order).grade}" />
+								</p:columns>
+								
+								<p:column headerText="#{lbl['gradeManagement.label.assignmentGrades']}">
+									<h:outputText value="#{g.finalAssignmentGrades.grade}" styleClass="d" />
+								</p:column>
+								
+								<p:column headerText="#{lbl['gradeManagement.label.attendanceGrade']}">
+									<h:outputText value="#{g.attendanceGrade.grade}" styleClass="d" />
+								</p:column>
+								
+								<p:column headerText="#{lbl['gradeManagement.label.gamificationGrade']}">
+									<h:outputText value="#{g.gamificationGrade.grade}" styleClass="d" />
+								</p:column>
+								
+								<p:columns value="#{courseDetailsBean.otherGradeColumns}" var="col">
+									<f:facet name="header">
+						                <h:outputText value="#{col.label}" />
+						            </f:facet>
+						            <h:outputText value="#{g.otherGrades.get(col.order).grade}" />
+								</p:columns>
+								
+								<p:column headerText="#{lbl['general.label.overallGrade']}">
+									<h:outputText value="#{g.finalGrade}" styleClass="d" />
+								</p:column>
+						</p:dataTable>
+						
+						<h:outputText value="#{lbl['courseDetails.label.attendances']}" styleClass="title-text" style="display: block; margin-top: 20px;"></h:outputText>
+						<p:dataTable id="attTable" widgetVar="dtAttTable" style="margin-top: 8px;"
+								paginator="false" rows="10"
+								emptyMessage="#{lbl['common.label.noRecordFound']}" 
+								value="#{courseDetailsBean.attendanceDetails}" var="g" rowKey="#{g.student.username}"
+								styleClass="borderless light-header" >
+							<p:columns value="#{courseDetailsBean.attendanceColumns}" var="col">
+								<f:facet name="header">
+					                <h:outputText value="#{col.label}" />
+					            </f:facet>
+					            <h:outputText value="#{g.attendances.get(col.order).attendanceString}" />
+							</p:columns>	
+						</p:dataTable>
+						
+						<h:outputText value="#{lbl['courseDetails.label.assignments']}" styleClass="title-text" style="display: block; margin-top: 20px;"></h:outputText>
+						<p:dataTable id="asgnTable" widgetVar="dtAsgnTable" style="margin-top: 8px;"
+								paginator="false" rows="10"
+								emptyMessage="#{lbl['common.label.noRecordFound']}" 
+								value="#{courseDetailsBean.assignmentGrades}" var="g" rowKey="#{g.student.username}"
+								styleClass="borderless light-header" >
+							<p:columns value="#{courseDetailsBean.assignmentColumns}" var="col">
+								<f:facet name="header">
+					                <h:outputText value="#{col.label}" />
+					            </f:facet>
+					            <h:outputText value="#{g.grades.get(col.order).grade}" />
+							</p:columns>	
+						</p:dataTable>
+					</p:tab>
+					
+					
+					
+				</p:tabView>
+			</h:form>
+		</section>
+		
+		<div class="modal fade containing-div" id="gamification-modal" tabindex="-1" role="dialog" data-backdrop="static"  data-keyboard="false"
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="gamification-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{lbl['courseList.label.enterEnrollmentKey']}</span>
+							
+							<p:commandLink styleClass="close-modal fr" onclick="hideModal('#gamification-modal'); setDropDownCarat();">
+						        <i class="fa fa-close fa-2x"></i>
+						    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="gamificationForm" styleClass="modal-dialog-form">
+						<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol" styleClass="full-width-grid">
+							
+							<h:outputText value="#{lbl['gamificationSettings.label.generalEnabled']}" styleClass="title-text" />
+								<h:panelGrid style="width: 100%;">
+									<p:selectOneButton value="#{courseDetailsBean.settings.gamificationEnabled}" id="gamificationEnabled" 
+										required="true" requiredMessage="#{msg['error.select_value']}">
+										<p:ajax update="badgesEnabled leaderboardsEnabled achievementsEnabled"/>
+										<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+										<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+									</p:selectOneButton>
+									<p:message for="gamificationEnabled" />
+								</h:panelGrid>
+								
+								<h:outputText value="#{lbl['gamificationSettings.label.leaderboardsEnabled']}" styleClass="title-text" />
+								<h:panelGrid style="width: 100%;">
+									<p:selectOneButton value="#{courseDetailsBean.settings.leaderboardsEnabled}" id="leaderboardsEnabled" 
+										required="true" requiredMessage="#{msg['error.select_value']}"
+										disabled="#{!courseDetailsBean.settings.gamificationEnabled}">
+										<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+										<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+									</p:selectOneButton>
+									<p:message for="leaderboardsEnabled" />
+								</h:panelGrid>
+								
+								<h:outputText value="#{lbl['gamificationSettings.label.badgesEnabled']}" styleClass="title-text" />
+								<h:panelGrid style="width: 100%;">
+									<p:selectOneButton value="#{courseDetailsBean.settings.badgesEnabled}" id="badgesEnabled" 
+										required="true" requiredMessage="#{msg['error.select_value']}"
+										disabled="#{!courseDetailsBean.settings.gamificationEnabled}">
+										<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+										<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+									</p:selectOneButton>
+									<p:message for="badgesEnabled" />
+								</h:panelGrid>
+								
+								<h:outputText value="#{lbl['gamificationSettings.label.achievementsEnabled']}" styleClass="title-text" />
+								<h:panelGrid style="width: 100%;">
+									<p:selectOneButton value="#{courseDetailsBean.settings.achievementsEnabled}" id="achievementsEnabled" 
+										required="true" requiredMessage="#{msg['error.select_value']}"
+										disabled="#{!courseDetailsBean.settings.gamificationEnabled}">
+										<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+										<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+									</p:selectOneButton>
+									<p:message for="achievementsEnabled" />
+								</h:panelGrid>
+							
+						</h:panelGrid>
+
+						<div class="input clearfix">
+							<p:commandButton update=":growl @form :semCourseForm:courseTabs" oncomplete="hideModalOnSuccessWithDropdown(args,'#gamification-modal');"
+								value="#{lbl['courseList.label.updateSettings']}" styleClass="submit-input grad-btn ln-tr" actionListener="#{courseDetailsBean.addOrUpdateGamificationSettings()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+			</div>
+		</div>
+		
+		<div class="modal fade containing-div" id="students-modal" tabindex="-1" role="dialog" data-backdrop="static"  data-keyboard="false"
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="students-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{lbl['courseDetails.label.classMates']}</span>
+							
+							<p:commandLink styleClass="close-modal fr" onclick="hideModal('#students-modal'); setDropDownCarat();">
+						        <i class="fa fa-close fa-2x"></i>
+						    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<h:form>
+						<p:dataTable id="userTable" widgetVar="dtUserTable"
+										paginator="true" rows="10" paginatorAlwaysVisible="false"
+										emptyMessage="#{lbl['common.label.noRecordFound']}" 
+										value="#{courseDetailsBean.otherStudents}" var="u" rowKey="#{u.username}"
+										styleClass="borderless" tableStyleClass="content-fitting-table">
+										
+							<p:column headerText="#{lbl['general.labels.fullname']}">
+								<a href="${request.contextPath}/app/user-profile?username=#{u.username}" class="ln-tr">#{u.fullName}</a>
+							</p:column>
+						</p:dataTable>
+		                 
+		                 				
+						<div class="input clearfix">
+							<p:commandButton update=":growl" oncomplete="hideModal('#students-modal');"
+								value="#{lbl['general.labels.close']}" styleClass="submit-input management-button clear-button grad-btn ln-tr" immediate="true"/>
+						</div>
+					</h:form>
+				
+				</h:panelGroup>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,49 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title"></ui:define>
+	
+	<ui:define name="content">
+		<script type="text/javascript">
+	    	$(function() {
+	    		$(".nav>ul>li.active").removeClass("active");
+	    		$("#contact_menu_item").addClass("active");
+	    	});
+	    </script>
+	    
+		<div class="main">
+			<div class="wrap">
+				<div class="contact">
+		          <div class="m_contact"><span class="left_line1"> </span>Contact<span class="right_line1"> </span></div>
+	              <p class="m_12">dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum.</p>
+	              <div class="contatct-top">
+	               <form method="post" action="contact-post.html">
+						<div class="to">
+	                     	<input type="text" class="text" value="Name" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Name';}" />
+						 	<input type="text" class="text" value="Email" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Email';}" style="margin-left: 10px" />
+						</div>
+						<div class="to">
+	                     	<input type="text" class="text" value="Your Website" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Your Website';}" />
+						 	<input type="text" class="text" value="Subject" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Subject';}" style="margin-left: 10px" />
+						</div>
+						<div class="text">
+		                   <textarea value="Message:" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Message';}">Message:</textarea>
+		                </div>
+		                <div>
+		               		<input type="submit" value="Submit" />
+		                </div>
+	               </form>
+	            </div>
+			   </div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

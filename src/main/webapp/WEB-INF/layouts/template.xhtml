@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+<f:view contentType="text/html">
+	<h:head>
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		
+		<title>#{lbl['main.label.portalName']} | <ui:insert name="title"/></title>
+		<ui:insert name="headIncludes" />
+		
+		<link href="${request.contextPath}/resources/style.css" rel="stylesheet" />
+		
+		<!-- Responsiveness -->
+        <link rel="stylesheet" href="${request.contextPath}/resources/assets/css/responsive.css" type="text/css" />
+        <!-- FAV & Touch Icons -->
+        <link rel="shortcut icon" href="${request.contextPath}/resources/assets/img/icons/favicon.ico" />
+        <link rel="apple-touch-icon" href="${request.contextPath}/resources/assets/img/icons/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="${request.contextPath}/resources/assets/img/icons/apple-touch-icon-72x72.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="${request.contextPath}/resources/assets/img/icons/apple-touch-icon-114x114.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="${request.contextPath}/resources/assets/img/icons/apple-touch-icon-144x144.png" />
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/headscripts.js"></script>
+        
+        <!--[if lt IE 9]>
+            <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+            <script>window.html5 || document.write('<script src="assets/js/vendor/html5shiv.js"><\/script>')</script>
+        <![endif]-->
+	</h:head>
+	<h:body>
+		<script type="text/javascript">
+
+			function sectionLoaderFadeOut(subclass) {
+				var classPath = ".loader.section-loader." + subclass;
+			 	$(classPath).fadeOut('slow');
+			}
+		
+			function sectionLoaderFadeIn(subclass) {
+				var classPath = ".loader.section-loader." + subclass;
+			 	$(classPath).fadeIn('slow');
+			}
+			
+			function openModal(modalId) {
+			     $(modalId).modal('show');
+			}
+	    </script>
+	    
+		<p:growl id="growl" showDetail="true" for="growlMessage" />
+		<p:dialog widgetVar="dlgWait" showHeader="false" resizable="false" closable="false" draggable="false" modal="true">#{msg['general.please_wait']}</p:dialog>
+        <div id="entire">
+<!--             <div class="loader"></div> -->
+            
+            <!-- Top Bar -->
+            <h:panelGroup layout="block" styleClass="top-bar clearfix" rendered="#{sessionBean.isLoggedIn()}">
+                <div class="container">
+                    <div class="fr top-contact">
+                        <ul class="clearfix">
+                            <li class="fl"><i class="fa fa-user"></i><span class="text">Welcome, #{sessionBean.currentUsername}</span></li>
+                            <li class="fl divider"><span>&#124;</span></li>
+						 	<li class="fl"><i class="fa fa-sign-out"></i><span class="text"><a href="${request.contextPath}/app/logout">#{lbl['main.menu.logout']}</a></span></li>
+                        </ul>
+                    </div><!-- End Top Contact -->
+                </div>
+             </h:panelGroup>
+            
+            <!-- Header -->
+			<header class="alt static-header">
+                <div class="container">
+                    <div class="logo-container fl clearfix">
+                        <a href="${request.contextPath}" class="ib">
+                            <img src="${request.contextPath}/resources/assets/img/logo@2x.png" class="fl" alt="Logo" />
+                            <span class="site-name">#{lbl['main.label.portalName']}<span>.</span></span>
+                        </a>
+                    </div><!-- End Logo Container -->
+                    <nav class="main-navigation fr">
+                        <ul class="clearfix">
+                            <li class="parent-item nochild" id="home_menu_item">
+                                <a href="${request.contextPath}/app/main" class="ln-tr">#{lbl['main.menu.home']}</a>
+                            </li>
+                            <h:panelGroup rendered="#{!sessionBean.isLoggedIn()}">
+	                            <li class="parent-item login">
+	                                <a href="${request.contextPath}/app/signin" class="ln-tr"><span class="grad-btn">#{lbl['main.menu.login']}</span></a>
+	                            </li>
+                            </h:panelGroup>
+                            
+                            <h:panelGroup rendered="#{sessionBean.isLoggedIn()}">
+                            	<h:panelGroup rendered="#{sec:areAnyGranted('ROLE_ADMINISTRATOR')}">
+		                            <li class="parent-item nochild" id="academic_year_menu_item">
+		                                <a href="${request.contextPath}/app/admin/year-management" class="ln-tr"><span class="ln-tr">#{lbl['main.menu.year_management']}</span></a>
+		                            </li>
+		                            
+		                            <li class="parent-item nochild" id="semester_menu_item">
+		                                <a href="${request.contextPath}/app/admin/semester-management" class="ln-tr"><span class="ln-tr">#{lbl['main.menu.semester_management']}</span></a>
+		                            </li>
+		                            
+		                            <li class="parent-item nochild" id="user_menu_item">
+		                                <a href="${request.contextPath}/app/admin/user-management" class="ln-tr"><span class="ln-tr">#{lbl['main.menu.user_management']}</span></a>
+		                            </li>
+                            	</h:panelGroup>
+                            	
+                            	<h:panelGroup rendered="#{sec:areAnyGranted('ROLE_INSTRUCTOR')}">
+		                            <li class="parent-item nochild" id="course_menu_item">
+		                                <a href="${request.contextPath}/app/instructor/course-management" class="ln-tr"><span class="ln-tr">#{lbl['main.menu.course_management']}</span></a>
+		                            </li>
+		                            
+		                            <li class="parent-item nochild" id="plan_menu_item">
+		                                <a href="${request.contextPath}/app/instructor/plan-management" class="ln-tr"><span class="ln-tr">#{lbl['main.menu.plan_management']}</span></a>
+		                            </li>
+		                            
+		                            <li class="parent-item nochild" id="grades_menu_item">
+		                                <a href="${request.contextPath}/app/instructor/grade-management" class="ln-tr"><span class="ln-tr">#{lbl['main.menu.grade_management']}</span></a>
+		                            </li>
+		                            
+		                            <li class="parent-item nochild" id="gamification_menu_item">
+		                                <a href="${request.contextPath}/app/instructor/gamification-settings" class="ln-tr"><span class="ln-tr">#{lbl['main.menu.gamification_settings']}</span></a>
+		                            </li>
+                            	</h:panelGroup>
+                            	
+                            	<h:panelGroup rendered="#{sec:areAnyGranted('ROLE_STUDENT')}">
+		                            <li class="parent-item nochild" id="course_list_menu_item">
+		                                <a href="${request.contextPath}/app/course-list" class="ln-tr"><span class="ln-tr">#{lbl['main.menu.course_list']}</span></a>
+		                            </li>
+		                            
+		                            <li class="parent-item nochild" id="my_courses_menu_item">
+		                                <a href="${request.contextPath}/app/my-courses" class="ln-tr"><span class="ln-tr">#{lbl['main.menu.my_courses']}</span></a>
+		                            </li>
+                            	</h:panelGroup>
+                            	
+                            
+	                            <li class="parent-item nochild" id="settings_menu_item">
+	                                <a href="${request.contextPath}/app/settings" class="ln-tr"><span class="ln-tr">#{lbl['main.menu.settings']}</span></a>
+	                            </li>
+                            </h:panelGroup>
+                        </ul>
+                    </nav><!-- End NAV Container -->
+                    
+                    
+                    <div class="mobile-navigation fr">
+                        <a href="#" class="mobile-btn"><span></span></a>
+                        <div class="mobile-container"></div>
+                    </div><!-- end mobile navigation -->
+                </div>
+            </header><!-- End Main Header Container -->
+			
+			<div class="inner-head">
+                <div class="container">
+                    <h1 class="entry-title"><ui:insert name="pageTitle" /></h1>
+                    <p class="description">
+                        <ui:insert name="pageDescription" />
+                    </p>
+                  <!-- <div class="breadcrumb">
+                        <ul class="clearfix">
+                            <li class="ib"><a href="">Home</a></li>
+                            <li class="ib"><a href="">Blog</a></li>
+                            <li class="ib current-page"><a href="">Login</a></li>
+                        </ul>
+                    </div>
+                  -->  
+                </div><!-- End container -->
+            </div><!-- End Inner Page Head -->
+
+            <div class="clearfix"></div>
+
+            <ui:insert name="content" />
+
+            <div class="clearfix"></div>
+			
+			<!-- Footer -->
+			<footer id="footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3 col-footer-about">
+                            <div class="widget about-widget">
+                                <h6 class="widget-title">About GeNIE</h6>
+                                <p class="about-text">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lorem quam, adipiscing condimentum tristique vel, eleifend sed turpis. Pellentesque cursus arcu id magna euismod in elementum purus molestie.
+                                </p>
+                                <div class="footer-links">
+                                    <ul>
+                                        <li><a href="#" class="ln-tr">About Us</a></li>
+                                        <li><a href="#" class="ln-tr">Meet Our Team</a></li>
+                                        <li><a href="#" class="ln-tr">Contact Us</a></li>
+                                    </ul>
+                                </div><!-- End Footer Links -->
+                            </div><!-- End About Widget -->
+                        </div><!-- End col-md3 -->
+                        <div class="col-md-4 col-footer-separator">
+                        </div><!-- End col-md4 -->
+                        <div class="col-md-2 col-footer-quicklinks">
+                            <div class="widget links-widget">
+                                <h6 class="widget-title">Quick Links</h6>
+                                <div class="footer-links">
+                                    <ul>
+                                        <li><a href="#" class="ln-tr">Help</a></li>
+                                        <li><a href="#" class="ln-tr">Sitemap</a></li>
+                                        <li><a href="#" class="ln-tr">Mobile</a></li>
+                                        <li><a href="#" class="ln-tr">Privacy Policy</a></li>
+                                        <li><a href="#" class="ln-tr">Support</a></li>
+                                        <li><a href="#" class="ln-tr">Instructors</a></li>
+                                    </ul>
+                                </div><!-- End Footer Links -->
+                            </div><!-- End Links Widget -->
+                        </div><!-- End col-md2 -->
+                    </div>
+                </div>
+                
+                <div id="bottom">
+                    <div class="container">
+                        <div class="fl copyright"> <p>
+                            Icons made by <a href="http://www.flaticon.com/authors/freepik" title="Freepik">
+                            Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> 
+                            is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a>
+                        </p></div><!-- End Copyright -->
+                    </div><!-- End container -->
+                </div><!-- End Bottom Footer -->
+            </footer><!-- End Footer -->
+		</div>
+		<div id="debug"></div>
+		
+        <!-- Plugins -->
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/bsmodal.min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/jquery.countdown.min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/jquery.easydropdown.min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/jquery.flexslider-min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/jquery.isotope.min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/jquery.themepunch.tools.min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/jquery.themepunch.revolution.min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/jquery.viewportchecker.min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/jquery.waypoints.min.js"></script>
+        <script type="text/javascript" src="${request.contextPath}/resources/assets/js/scripts.js"></script>
+	</h:body>
+</f:view>
+</html>

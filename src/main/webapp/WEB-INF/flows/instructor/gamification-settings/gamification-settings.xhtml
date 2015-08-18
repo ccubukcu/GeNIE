@@ -1,0 +1,734 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.instructor.gamification.title']}</ui:define>
+
+	<ui:define name="pageTitle">#{lbl['pages.instructor.gamification.header']}</ui:define>
+	<ui:define name="pageDescription">#{lbl['pages.instructor.gamification.description']}</ui:define>
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#gamification_menu_item");
+		</script>
+
+		<article class="post single">
+		<div class="container">
+			<div class="row">
+					<div class="entry clearfix">
+           				<div class="loader section-loader plan-table-loader"></div>
+						
+						<h:form id="gamificationTableForm">
+							<h:panelGroup>
+								<p:selectOneMenu id="courseFilter" converter="semesterCourseConverter" 
+									value="#{gamificationSettingsBean.selectedCourse}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+									<p:ajax update="@form :tabView:generalTabForm :tabView:leaderboardsTabForm :tabView:badgesTabForm :tabView:achievementsTabForm" listener="#{gamificationSettingsBean.onCourseSelect()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+					                <f:selectItem itemDisabled="#{gamificationSettingsBean.courseSelected}" itemLabel="#{lbl['gamificationSettings.label.selectSemesterCourse']}"  itemValue="" noSelectionOption="true" />
+					            	<f:selectItems value="#{gamificationSettingsBean.courses}" var="c" itemValue="#{c}" itemLabel="#{c.course.courseIdentifier} - #{c.semester.semesterIdentifier}" />
+					            </p:selectOneMenu>
+				            </h:panelGroup>
+						</h:form>
+						            
+						<p:tabView id="tabView" activeIndex="#{gamificationSettingsBean.selectedTab}">
+							<p:ajax event="tabChange" listener="#{gamificationSettingsBean.onTabChange}" />
+							<p:tab title="#{lbl['gamificationSettings.label.generalTab']}">
+								<h:form id="generalTabForm">
+									<h:panelGrid>
+							            <p:commandButton update="@form :growl" oncomplete="setDropDownCarat(); setPaginatorClasses();" actionListener="#{gamificationSettingsBean.addOrUpdateGeneralSettings()}" style="margin-top:18px;"
+											value="#{lbl['gamificationSettings.label.updateGeneralSettings']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+											disabled="#{!gamificationSettingsBean.courseSelected}" />
+						            </h:panelGrid>
+									
+									<h:panelGrid columns="2" columnClasses="panelGrid-label-col, panelGrid-input-col" styleClass="input-panel-grid"
+										rendered="#{gamificationSettingsBean.courseSelected}" style="width: 65%;">
+										<h:outputText value="#{lbl['gamificationSettings.label.generalEnabled']}" styleClass="title-text" />
+										<h:panelGrid style="width: 100%;">
+											<p:selectOneButton value="#{gamificationSettingsBean.generalSettings.gamificationEnabled}" id="gamificationEnabled" 
+												required="true" requiredMessage="#{msg['error.select_value']}">
+												<p:ajax update="badgesEnabled leaderboardsEnabled achievementsEnabled pointsName"/>
+												<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+												<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+											</p:selectOneButton>
+											<p:message for="gamificationEnabled" />
+										</h:panelGrid>
+										
+										<h:outputText value="#{lbl['gamificationSettings.label.leaderboardsEnabled']}" styleClass="title-text" />
+										<h:panelGrid style="width: 100%;">
+											<p:selectOneButton value="#{gamificationSettingsBean.generalSettings.leaderboardsEnabled}" id="leaderboardsEnabled" 
+												required="true" requiredMessage="#{msg['error.select_value']}"
+												disabled="#{!gamificationSettingsBean.generalSettings.gamificationEnabled}">
+												<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+												<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+											</p:selectOneButton>
+											<p:message for="leaderboardsEnabled" />
+										</h:panelGrid>
+										
+										<h:outputText value="#{lbl['gamificationSettings.label.badgesEnabled']}" styleClass="title-text" />
+										<h:panelGrid style="width: 100%;">
+											<p:selectOneButton value="#{gamificationSettingsBean.generalSettings.badgesEnabled}" id="badgesEnabled" 
+												required="true" requiredMessage="#{msg['error.select_value']}"
+												disabled="#{!gamificationSettingsBean.generalSettings.gamificationEnabled}">
+												<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+												<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+											</p:selectOneButton>
+											<p:message for="badgesEnabled" />
+										</h:panelGrid>
+										
+										<h:outputText value="#{lbl['gamificationSettings.label.achievementsEnabled']}" styleClass="title-text" />
+										<h:panelGrid style="width: 100%;">
+											<p:selectOneButton value="#{gamificationSettingsBean.generalSettings.achievementsEnabled}" id="achievementsEnabled" 
+												required="true" requiredMessage="#{msg['error.select_value']}"
+												disabled="#{!gamificationSettingsBean.generalSettings.gamificationEnabled}">
+												<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+												<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+											</p:selectOneButton>
+											<p:message for="achievementsEnabled" />
+										</h:panelGrid>
+										
+										<h:outputText value="#{lbl['gamificationSettings.label.pointsName']}" styleClass="title-text" />
+										<h:panelGrid style="width: 100%;">
+											<p:inputText id="pointsName" required="true" style="width: 42%;"
+												disabled="#{!gamificationSettingsBean.generalSettings.gamificationEnabled}"
+												requiredMessage="#{msg['error.enter_value']}" value="#{gamificationSettingsBean.generalSettings.pointsName}"/>
+											<p:message for="pointsName" />
+										</h:panelGrid>
+										
+										<h:outputText value="#{lbl['gamificationSettings.label.maximumPoints']}" styleClass="title-text" />
+										<h:panelGrid style="width: 100%;" columns="2">
+											<p:inputText id="maxPoints" required="true" style="width: 42%;"
+												disabled="#{!gamificationSettingsBean.generalSettings.gamificationEnabled}"
+												requiredMessage="#{msg['error.enter_value']}" value="#{gamificationSettingsBean.generalSettings.maxConvertablePoints}"/>
+											<h:panelGroup id="pointsInfo">
+												<i class="fa fa-info-circle fa-lg" style="line-height: 0;"></i>
+											</h:panelGroup>
+											
+											<p:message for="maxPoints" />
+											<p:tooltip for="pointsInfo" value="#{lbl['gamificationSettings.label.maximumPointsInfo']}" />
+										</h:panelGrid>
+									</h:panelGrid>
+					            </h:form>
+							</p:tab>
+							
+							<p:tab title="#{lbl['gamificationSettings.label.leaderboardsTab']}">
+								<h:form id="leaderboardsTabForm">
+									<h:panelGrid>
+							            <p:commandButton update="@form :growl" oncomplete="setDropDownCarat(); setPaginatorClasses();" actionListener="#{gamificationSettingsBean.addOrUpdateLeaderboardSettings()}" style="margin-top:18px;"
+											value="#{lbl['gamificationSettings.label.updateLeaderboardSettings']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+											disabled="#{!gamificationSettingsBean.courseSelected}" />
+						            </h:panelGrid>
+									
+									<h:panelGrid columns="2" columnClasses="panelGrid-label-col, panelGrid-input-col" styleClass="input-panel-grid" 
+										rendered="#{gamificationSettingsBean.courseSelected}" style="width: 65%;">
+										
+										<h:outputText value="#{lbl['gamificationSettings.label.leaderboardAnonymity']}" styleClass="title-text" />
+										<h:panelGrid columns="3">
+											<p:selectOneButton value="#{gamificationSettingsBean.leaderboardSettings.anonymous}" id="anonymity" 
+												required="true" requiredMessage="#{msg['error.select_value']}"
+												disabled="#{!gamificationSettingsBean.generalSettings.gamificationEnabled}">
+												<f:selectItem itemLabel="#{lbl['gamificationSettings.label.anonymous']}" itemValue="true" />
+												<f:selectItem itemLabel="#{lbl['gamificationSettings.label.usernameVisible']}" itemValue="false" />
+											</p:selectOneButton>
+											<h:panelGroup id="info">
+												<i class="fa fa-info-circle fa-lg" style="line-height: 0;"></i>
+											</h:panelGroup>
+											
+											<p:tooltip id="infoTooltip" for="info" value="#{lbl['gamificationSettings.label.anonymityInfo']}" style="background-color: #fff; width: 350px;"/>
+											<p:message for="anonymity" />
+										</h:panelGrid>
+										
+										<h:outputText value="#{lbl['gamificationSettings.label.leaderboardVisibility']}" styleClass="title-text" />
+										<h:panelGrid style="width: 100%;">
+											<p:selectOneMenu id="visibility-selection" required="true" requiredMessage="#{msg['error.select_value']}" style="width: 60% !important;"
+												value="#{gamificationSettingsBean.leaderboardSettings.visibility}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-dialog">
+												<p:ajax update="@form" oncomplete="setDropDownCarat();" />
+								            	<f:selectItems value="#{gamificationSettingsBean.visibilityItems}" />
+								            </p:selectOneMenu>
+								            <p:message for="visibility-selection"/>
+										</h:panelGrid>
+										
+										<h:outputText id="top-percentile-label" value="#{lbl['gamificationSettings.label.visibleTopPercentile']}" styleClass="title-text"
+													rendered="#{gamificationSettingsBean.topPercentileRendered}"/>
+										<h:panelGrid style="width: 100%;" rendered="#{gamificationSettingsBean.topPercentileRendered}">
+											<p:inputText id="top-percentile" required="true" style="width: 63%;"
+												requiredMessage="#{msg['error.enter_value']}" value="#{gamificationSettingsBean.leaderboardSettings.topStudents}">
+												<f:validateLongRange minimum="0" maximum="100" />
+											</p:inputText>
+											<p:message for="top-percentile" />
+										</h:panelGrid>
+										
+										<h:outputText id="bottom-percentile-label" value="#{lbl['gamificationSettings.label.visibleBottomPercentile']}" styleClass="title-text"
+											rendered="#{gamificationSettingsBean.bottomPercentileRendered}"/>
+										<h:panelGrid style="width: 100%;" rendered="#{gamificationSettingsBean.bottomPercentileRendered}">
+											<p:inputText id="bottom-percentile" required="true" style="width: 63%;"
+												requiredMessage="#{msg['error.enter_value']}" value="#{gamificationSettingsBean.leaderboardSettings.bottomStudents}">
+												<f:validateLongRange minimum="0" maximum="100" />
+											</p:inputText>
+											<p:message for="bottom-percentile" />
+										</h:panelGrid>
+									</h:panelGrid>
+					            </h:form>
+							</p:tab>
+							
+							<p:tab title="#{lbl['gamificationSettings.label.badgesTab']}">
+								<h:form id="badgesTabForm">
+									<h:panelGrid columns="3" styleClass="management-buttons" id="badge-operations">
+										<p:commandButton update="@form :growl :badge-modal-content" oncomplete="openModal('#badge-modal'); setPaginatorClasses();" actionListener="#{gamificationSettingsBean.prepareAddBadgeDialog()}"
+											value="#{lbl['general.labels.add']}" styleClass="submit-input management-button add-button grad-btn ln-tr" 
+											disabled="#{!gamificationSettingsBean.courseSelected}"/>
+											
+										<p:commandButton update="@form :growl :badge-modal-content" oncomplete="openModal('#badge-modal'); setPaginatorClasses();" actionListener="#{gamificationSettingsBean.prepareUpdateBadgeDialog()}"
+											value="#{lbl['general.labels.edit']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+											disabled="#{gamificationSettingsBean.badgeButtonsDisabled}" />
+											
+										<p:commandButton update="@form :growl" oncomplete="openModal('#badge-approval-modal')"
+											value="#{lbl['general.labels.delete']}" styleClass="submit-input management-button delete-button grad-btn ln-tr"
+											disabled="#{gamificationSettingsBean.badgeButtonsDisabled}" />
+									</h:panelGrid>
+									
+									<p:dataTable id="badgeTable" var="b" widgetVar="dtBadgeTable" rendered="#{gamificationSettingsBean.courseSelected}"
+												paginator="true" rows="10" paginatorAlwaysVisible="false"
+												emptyMessage="#{lbl['common.label.noRecordFound']}" selection="#{gamificationSettingsBean.selectedBadge}"
+												value="#{gamificationSettingsBean.badges}" rowKey="#{b.id}" selectionMode="single"
+												styleClass="borderless" >
+												
+												<p:ajax event="rowSelect" update=":tabView:badgesTabForm:badge-operations" listener="#{gamificationSettingsBean.onBadgeSelected()}" />
+												<p:ajax event="rowUnselect" update=":tabView:badgesTabForm:badge-operations" listener="#{gamificationSettingsBean.onBadgeUnselected()}" />
+												
+										<p:column headerText="#{lbl['badge.label.image']}">
+											<img src="#{b.encodedImage}" width="64" height="64"
+												class="datatable-item-image" alt="" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['badge.label.title']}">
+											<h:outputText value="#{b.name}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['badge.label.description']}">
+											<h:outputText id ="desc" value="#{b.description}"/>
+										</p:column>
+									</p:dataTable>
+					            </h:form>
+							</p:tab>
+							
+							<p:tab title="#{lbl['gamificationSettings.label.achievementsTab']}">
+								<h:form id="achievementsTabForm">
+									<h:panelGrid columns="3" styleClass="management-buttons" id="achievement-operations">
+										<p:commandButton update="@form :growl :achievement-modal-content" oncomplete="openModalWithDropdown('#achievement-modal');" actionListener="#{gamificationSettingsBean.prepareAddAchievementDialog()}"
+											value="#{lbl['general.labels.add']}" styleClass="submit-input management-button add-button grad-btn ln-tr" 
+											disabled="#{!gamificationSettingsBean.courseSelected}"/>
+											
+										<p:commandButton update="@form :growl :achievement-modal-content" oncomplete="openModalWithDropdown('#achievement-modal');" actionListener="#{gamificationSettingsBean.prepareUpdateAchievementDialog()}"
+											value="#{lbl['general.labels.edit']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+											disabled="#{gamificationSettingsBean.achievementButtonsDisabled}" />
+											
+										<p:commandButton update="@form :growl" oncomplete="openModal('#achievement-approval-modal')"
+											value="#{lbl['general.labels.delete']}" styleClass="submit-input management-button delete-button grad-btn ln-tr"
+											disabled="#{gamificationSettingsBean.achievementButtonsDisabled}" />
+									</h:panelGrid>
+									
+									<p:dataTable id="achievementTable" var="a" widgetVar="dtAchievementTable" rendered="#{gamificationSettingsBean.courseSelected}"
+												paginator="true" rows="10" paginatorAlwaysVisible="false"
+												emptyMessage="#{lbl['common.label.noRecordFound']}" selection="#{gamificationSettingsBean.selectedAchievement}"
+												value="#{gamificationSettingsBean.achievements}" rowKey="#{a.id}" selectionMode="single"
+												styleClass="borderless" >
+												
+												<p:ajax event="rowSelect" update=":tabView:achievementsTabForm:achievement-operations" listener="#{gamificationSettingsBean.onAchievementSelected()}" />
+												<p:ajax event="rowUnselect" update=":tabView:achievementsTabForm:achievement-operations" listener="#{gamificationSettingsBean.onAchievementUnselected()}" />
+												
+										<p:column headerText="#{lbl['achievement.label.image']}">
+											<img src="#{a.encodedImage}" width="64" height="64"
+												class="datatable-item-image" alt="" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['achievement.label.title']}">
+											<h:outputText id="ti" value="#{a.name}"/>
+										</p:column>
+										
+										<p:column headerText="#{lbl['achievement.label.description']}">
+											<h:outputText id ="d" value="#{a.description}"/>
+										</p:column>
+										
+										<p:column headerText="#{lbl['achievement.label.type']}">
+											<h:outputText id ="ty" value="#{a.achievementTypeString}"/>
+										</p:column>
+										
+										<p:column headerText="#{lbl['achievement.label.threshold']}">
+											<h:outputText id ="th" value="#{a.thresholdValue}"/>
+										</p:column>
+										
+										<p:column headerText="#{lbl['achievement.label.comparisonType']}">
+											<h:outputText id ="ct" value="#{a.comparisonTypeString}"/>
+										</p:column>
+										
+										<p:column headerText="#{lbl['achievement.label.targetCount']}">
+											<h:outputText id ="tc" value="#{a.targetCount}"/>
+										</p:column>
+										
+										<p:column headerText="#{lbl['achievement.label.pointReward']}">
+											<h:outputText id ="pr" value="#{a.pointReward}"/>
+										</p:column>
+										
+										<p:column headerText="#{lbl['achievement.label.badgeReward']}">
+											<img src="#{a.badgeReward.encodedImage}" width="64" height="64"
+												class="datatable-item-image" alt="" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['achievement.label.gradeReward']}">
+											<h:outputText id ="gr" value="#{a.rewardGradeCriteria.name}: #{a.gradeReward}"/>
+										</p:column>
+									</p:dataTable>
+					            </h:form>
+							</p:tab>
+						</p:tabView>
+					</div>
+				</div>
+			</div>
+		</article>
+		
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<!-- ~~~~~~~~~~~~~~~~~ Badge Dialogs ~~~~~~~~~~~~~~~~ -->
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		
+		<div class="modal fade containing-div" id="badge-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" 
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="badge-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{gamificationSettingsBean.badgeDialogHeader}</span>
+							
+						<p:commandLink styleClass="close-modal fr"  onclick="hideModal('#badge-modal');" >
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="badgeManagementForm" styleClass="modal-dialog-form">
+						
+						<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol">
+							<h:outputText value="#{lbl['badge.label.title']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="badgeName" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="200"
+									value="#{gamificationSettingsBean.selectedBadge.name}"/>
+								<p:message for="badgeName"/>
+							</h:panelGrid>
+							
+							<h:outputText value="#{lbl['badge.label.uploadedOrSelected']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:selectOneButton value="#{gamificationSettingsBean.selectedBadge.usingUploadedImage}" id="badgeImgSrc" 
+									required="true" requiredMessage="#{msg['error.select_value']}" >
+									<p:ajax event="change" update="imagePreview"/>
+									<f:selectItem itemLabel="#{lbl['badge.label.uploadedImg']}" itemValue="true" />
+									<f:selectItem itemLabel="#{lbl['badge.label.selectedImg']}" itemValue="false" />
+								</p:selectOneButton>
+								<p:message for="badgeImgSrc" />
+							</h:panelGrid>
+							
+							<h:outputText value="#{lbl['badge.label.imagePreview']}" styleClass="title-text" />
+							
+							<h:panelGrid styleClass="input-form-message-panel" columns="2" id="imagePreview" style="text-align: center;">
+								<img src="#{gamificationSettingsBean.previewBadgeImage}" style="width: 96px; height: 96px;"
+												class="datatable-item-image" alt="" />
+								<p:commandButton immediate="true" oncomplete="openLayeredModal('#badge-image-modal', '#badge-modal');"
+									value="#{lbl['badge.label.changeImage']}" styleClass="submit-input grad-btn ln-tr add-button"/>
+							</h:panelGrid>
+						</h:panelGrid>
+						
+						<h:outputText value="#{lbl['badge.label.description']}" styleClass="title-text" style="margin-top: 12px; display:block;"/>
+						<h:outputText id="longDesc" value="#{lbl['badge.label.descInfo']}" styleClass="regular-body-text" />
+						<p:inputTextarea maxlength="500" rows="3" value="#{gamificationSettingsBean.selectedBadge.description}"/>
+							
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :tabView:badgesTabForm:badgeTable :tabView:badgesTabForm:badge-operations" oncomplete="hideModalOnSuccess(args,'#badge-modal');"
+								value="#{gamificationSettingsBean.badgeDialogButtonLabel}" styleClass="#{gamificationSettingsBean.badgeDialogButtonClass}" actionListener="#{gamificationSettingsBean.addOrUpdateBadge()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+			</div>
+		</div>
+		
+		<div class="modal fade containing-div" id="badge-image-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" 
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="badge-image-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{lbl['badge.label.pickImageHeader']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" update=":badgeManagementForm" onclick="hideLayeredModal('#badge-image-modal', '#badge-modal');" >
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<p:tabView id="badgeImageTabs">
+						<p:tab title="#{lbl['badge.label.imageUploadTab']}">
+							<h:form id="badgeImageUpload" enctype="multipart/form-data">
+								<p:fileUpload fileUploadListener="#{gamificationSettingsBean.handleBadgeImageUpload}"  styleClass="grad-btn ln-tr add-button horizontal-uploader"
+														style="display: inline-block; box-shadow: none; width:100%;" fileLimit="1"
+														mode="advanced" dragDropSupport="false" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" sizeLimit="1250000"
+														oncomplete="hideLayeredModal('#badge-image-modal', '#badge-modal');"
+														update="@form :badgeManagementForm:imagePreview" multiple="false"/>
+														
+								<h:outputText id="display" value="#{lbl['badge.label.picRestrictions']}" styleClass="regular-body-text" />
+							</h:form>
+						</p:tab>
+						<p:tab title="#{lbl['badge.label.imageSelectTab']}">
+							<h:form id="badgeImageSelect">
+								<p:selectOneMenu id="badgeImageFilter" 
+									value="#{gamificationSettingsBean.selectedResourceFolder}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+									<p:ajax update="@form" listener="#{gamificationSettingsBean.onBadgeResourceFolderSelect()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+					            	<f:selectItem itemLabel="#{lbl['general.labels.pleaseSelect']}"  itemValue="" noSelectionOption="true" />
+					            	<f:selectItems value="#{gamificationSettingsBean.resourceFolderItems}" />
+					            </p:selectOneMenu>
+					            
+					            <p:dataGrid var="ri" value="#{gamificationSettingsBean.resourceImages}" columns="5" layout="grid"  paginator="true" id="badgeImageGrid"
+					            	rows="25" paginatorAlwaysVisible="false">
+					            	<h:panelGrid columns="1" style="width: 100%; text-align: center;">
+					            		<p:commandLink actionListener="#{gamificationSettingsBean.setSelectedResourceImage(ri)}" update=":badgeManagementForm:imagePreview" ajax="true"
+					            			oncomplete="hideLayeredModal('#badge-image-modal', '#badge-modal');" title="#{lbl['general.labels.select']}">
+										    <img src="#{ri.encodedImage}" width="64" height="64">
+										    </img>
+									    </p:commandLink>
+									</h:panelGrid>
+						        </p:dataGrid>
+					        </h:form>
+						</p:tab>
+					</p:tabView>
+				</h:panelGroup>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="badge-approval-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-trash-o fa-lg fa-lh-1"></i></span>
+						<span class="text">#{lbl['courseList.labels.unenrollConfirmation']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" onclick="hideModal('#badge-approval-modal');" oncomplete="setPaginatorClasses(); setDropDownCarat();">
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<h:form id="badgeApprovalForm" styleClass="modal-dialog-form">
+						
+						<h:outputText value="#{lbl['general.labels.removalNotice']}" styleClass="title-text" />
+
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :tabView:badgesTabForm:badgeTable :tabView:badgesTabForm:badge-operations" process="@form" oncomplete="hideModal('#badge-approval-modal');"
+								value="#{lbl['general.labels.delete']}" styleClass="submit-input grad-btn ln-tr delete-button" actionListener="#{gamificationSettingsBean.deleteBadge()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+			<!-- End Dialog -->
+		</div>
+		
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<!-- ~~~~~~~~~~~~~~ Achievement Dialogs ~~~~~~~~~~~~~ -->
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+			
+		<div class="modal fade containing-div" id="achievement-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" 
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="achievement-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{gamificationSettingsBean.achievementDialogHeader}</span>
+							
+						<p:commandLink styleClass="close-modal fr"  onclick="hideModal('#achievement-modal');" >
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="achievementManagementForm" styleClass="modal-dialog-form">
+						
+						<p:tabView id="achievementInputTabs" rendered="#{gamificationSettingsBean.selectedAchievement != null}">
+							<p:tab id="achInfoTab" title="#{lbl['achievement.label.informationTab']}">
+								<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol">
+									<h:outputText value="#{lbl['achievement.label.title']}" styleClass="title-text" />
+									<h:panelGrid styleClass="input-form-message-panel">
+										<p:inputText id="achievementName" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="200"
+											value="#{gamificationSettingsBean.selectedAchievement.name}"/>
+										<p:message for="achievementName"/>
+									</h:panelGrid>
+									
+									<h:outputText value="#{lbl['achievement.label.uploadedOrSelected']}" styleClass="title-text" />
+									<h:panelGrid styleClass="input-form-message-panel">
+										<p:selectOneButton value="#{gamificationSettingsBean.selectedAchievement.usingUploadedImage}" id="achievementImgSrc" 
+											required="true" requiredMessage="#{msg['error.select_value']}" >
+											<p:ajax event="change" update="imagePreview"/>
+											<f:selectItem itemLabel="#{lbl['achievement.label.uploadedImg']}" itemValue="true" />
+											<f:selectItem itemLabel="#{lbl['achievement.label.selectedImg']}" itemValue="false" />
+										</p:selectOneButton>
+										<p:message for="achievementImgSrc" />
+									</h:panelGrid>
+									
+									<h:outputText value="#{lbl['achievement.label.imagePreview']}" styleClass="title-text" />
+									
+									<h:panelGrid styleClass="input-form-message-panel" columns="2" id="imagePreview" style="text-align: center;">
+										<img src="#{gamificationSettingsBean.previewAchievementImage}" style="width: 96px; height: 96px;"
+														class="datatable-item-image" alt="" />
+										<p:commandButton immediate="true" oncomplete="openLayeredModal('#achievement-image-modal', '#achievement-modal');"
+											value="#{lbl['achievement.label.changeImage']}" styleClass="submit-input grad-btn ln-tr add-button"/>
+									</h:panelGrid>
+								</h:panelGrid>
+								
+								<h:outputText value="#{lbl['achievement.label.description']}" styleClass="title-text" style="margin-top: 12px; display:block;"/>
+								<h:outputText id="longDesc" value="#{lbl['achievement.label.descInfo']}" styleClass="regular-body-text" />
+								<p:inputTextarea maxlength="1000" rows="3" value="#{gamificationSettingsBean.selectedAchievement.description}"/>
+							</p:tab>
+							
+							<p:tab id="achCriteriaTab" title="#{lbl['achievement.label.criteriaTab']}">
+							
+								<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol" styleClass="full-width-grid" id="criteriaPanels">
+										
+									<h:outputText value="#{lbl['achievement.label.type']}" styleClass="title-text" />
+									<h:panelGrid style="width: 100%;">
+										<p:selectOneMenu id="achType" required="true" requiredMessage="#{msg['error.select_value']}"
+											value="#{gamificationSettingsBean.selectedAchievement.achievementType}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+											<p:ajax update="criteriaPanels" listener="#{gamificationSettingsBean.onAchievementTypeSelect()}" oncomplete="setDropDownCarat();"></p:ajax>
+											<f:selectItem itemLabel="#{lbl['general.labels.pleaseSelect']}"  itemValue="" noSelectionOption="true" />
+							            	<f:selectItems value="#{gamificationSettingsBean.achievementTypeItems}" />
+							            </p:selectOneMenu>
+										<p:message for="achType" />
+									</h:panelGrid>
+									
+									<h:outputText value="#{lbl['achievement.label.gradeType']}" styleClass="title-text" rendered="#{gamificationSettingsBean.gradingCriteriaRendered}"/>
+									<h:panelGrid style="width: 100%;" rendered="#{gamificationSettingsBean.gradingCriteriaRendered}">
+										<p:selectOneMenu id="achGCType"
+											value="#{gamificationSettingsBean.selectedAchievement.targetGradingCriteria}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+											<p:ajax update="criteriaPanels" listener="#{gamificationSettingsBean.onAchievementGradingCriteriaSelect()}" oncomplete="setDropDownCarat();"></p:ajax>
+											<f:selectItem itemLabel="#{lbl['achievement.label.allGradingCriteria']}"  itemValue="" />
+							            	<f:selectItems value="#{gamificationSettingsBean.achievementGradingCriteriaItems}" />
+							            </p:selectOneMenu>
+										<p:message for="achGCType" />
+									</h:panelGrid>
+										
+									<h:outputText value="#{lbl['achievement.label.gradeable']}" styleClass="title-text" rendered="#{gamificationSettingsBean.gradingCriteriaRendered}"/>
+									<h:panelGrid style="width: 100%;" rendered="#{gamificationSettingsBean.gradingCriteriaRendered}">
+										<p:selectOneMenu id="gradeCrit" converter="gradeCriteriaConverter" disabled="#{gamificationSettingsBean.gradeCriteriaDisabled}"
+											value="#{gamificationSettingsBean.selectedAchievementGradeCriteria}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+							                <f:selectItem itemLabel="#{lbl['achievement.label.allGradeCriteria']}" itemValue=""/>
+							            	<f:selectItems value="#{gamificationSettingsBean.achievementGradeCriteria}" var="gc" itemValue="#{gc}" itemLabel="#{gc.name}" />
+							            </p:selectOneMenu>
+										<p:message for="gradeCrit" />
+						            </h:panelGrid>
+										
+									<h:outputText value="#{lbl['achievement.label.comparisonType']}" styleClass="title-text" 
+										rendered="#{gamificationSettingsBean.comparisonTypeRendered}"/>
+									<h:panelGrid style="width: 100%;" rendered="#{gamificationSettingsBean.comparisonTypeRendered}">
+										<p:selectOneMenu id="achCompType" required="true" requiredMessage="#{msg['error.select_value']}"
+											value="#{gamificationSettingsBean.selectedAchievement.comparisonType}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+											<f:selectItem itemLabel="#{lbl['general.labels.pleaseSelect']}"  itemValue="" noSelectionOption="true" />
+							            	<f:selectItems value="#{gamificationSettingsBean.comparisonTypeItems}" />
+							            </p:selectOneMenu>
+										<p:message for="achCompType" />
+									</h:panelGrid>
+									
+									<h:panelGrid columns="2" rendered="#{gamificationSettingsBean.thresholdRendered}">
+										<h:outputText value="#{lbl['achievement.label.thresholdInput']}" styleClass="title-text" />
+										<h:panelGroup id="achThersholdInfo">
+											<i class="fa fa-info-circle fa-lg" style="line-height: 0;"></i>
+										</h:panelGroup>
+										
+										<p:tooltip for="achThersholdInfo" value="#{lbl['achievement.label.thresholdInfo']}" styleClass="regular-body-text dialog-tooltip" />
+									</h:panelGrid>
+									<h:panelGrid style="width: 100%;" rendered="#{gamificationSettingsBean.thresholdRendered}">
+										<p:inputText id="achThershold" required="true"
+											requiredMessage="#{msg['error.enter_value']}" value="#{gamificationSettingsBean.selectedAchievement.thresholdValue}">
+											<f:validateLongRange minimum="0" maximum="100" />
+										</p:inputText>
+										<p:message for="achThershold" />								
+									</h:panelGrid>
+									
+									<h:panelGrid columns="2" rendered="#{gamificationSettingsBean.criteriaPanelRendered}">
+										<h:outputText value="#{lbl['achievement.label.targetCountInput']}" styleClass="title-text" />
+										<h:panelGroup id="achTargetCountInfo">
+											<i class="fa fa-info-circle fa-lg" style="line-height: 0;"></i>
+										</h:panelGroup>
+										
+										<p:tooltip for="achTargetCountInfo" value="#{lbl['achievement.label.targetCountInfo']}" styleClass="regular-body-text dialog-tooltip" />
+									</h:panelGrid>
+									<h:panelGrid style="width: 100%;" rendered="#{gamificationSettingsBean.criteriaPanelRendered}">
+										<p:inputText id="achTargetCount" required="true"
+											requiredMessage="#{msg['error.enter_value']}" value="#{gamificationSettingsBean.selectedAchievement.targetCount}">
+											<f:validateLongRange minimum="0" maximum="100" />
+										</p:inputText>
+										<p:message for="achTargetCount" />
+									</h:panelGrid>
+								</h:panelGrid>
+								
+							</p:tab>
+							
+							<p:tab id="achRewardTab" title="#{lbl['achievement.label.rewardTab']}">
+								<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol" id="rewardPanels">
+									<h:outputText value="#{lbl['achievement.label.pointReward']}" styleClass="title-text" />
+									<h:panelGrid styleClass="input-form-message-panel">
+										<p:inputText id="points" value="#{gamificationSettingsBean.selectedAchievement.pointReward}">
+											<f:validateLongRange />	
+										</p:inputText>
+										<p:message for="points"/>
+									</h:panelGrid>
+									
+									<h:outputText value="#{lbl['achievement.label.gradeReward']}" styleClass="title-text"/>
+									<h:panelGrid style="width: 100%;">
+										<p:selectOneMenu id="rewardCrit" converter="gradeCriteriaConverter" 
+											value="#{gamificationSettingsBean.selectedRewardGradeCriteria}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+							                <p:ajax update="rewardPanels" oncomplete="setDropDownCarat();"></p:ajax>
+							                <f:selectItem itemLabel="#{lbl['general.labels.pleaseSelect']}" itemValue="" noSelectionOption="true"/>
+							            	<f:selectItems value="#{gamificationSettingsBean.allGradeCriteria}" var="gc" itemValue="#{gc}" itemLabel="#{gc.name}" />
+							            </p:selectOneMenu>
+										<p:message for="rewardCrit" />
+						            </h:panelGrid>
+						            
+						            <h:outputText value="#{lbl['achievement.label.weekReward']}" styleClass="title-text" rendered="#{gamificationSettingsBean.attendanceRewardSelected}"/>
+						           	<h:panelGrid style="width: 100%;" rendered="#{gamificationSettingsBean.attendanceRewardSelected}">	
+						           		<p:selectOneMenu value="#{gamificationSettingsBean.selectedAchievement.weekReward}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long"
+						           			id="weekReward">
+							                <f:selectItem itemLabel="#{lbl['gradeManagement.label.selectWeek']}"  itemValue="" noSelectionOption="true" />
+							            	<f:selectItems value="#{gamificationSettingsBean.weeks}"/>
+							            </p:selectOneMenu>
+								            
+										<p:message for="weekReward"/>
+									</h:panelGrid>
+									
+						            <h:outputText value="#{lbl['achievement.label.weekReward']}" styleClass="title-text" rendered="#{gamificationSettingsBean.assignmentRewardSelected}"/>
+						           	<h:panelGrid style="width: 100%;" rendered="#{gamificationSettingsBean.assignmentRewardSelected}">	
+										<p:selectOneMenu id="assignmentFilter" converter="assignmentConverter" 
+											value="#{gamificationSettingsBean.selectedAssignmentReward}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+							                <f:selectItem itemLabel="#{lbl['gradeManagement.label.selectAssignment']}"  itemValue="" noSelectionOption="true" />
+							            	<f:selectItems value="#{gamificationSettingsBean.assignments}" var="a" itemValue="#{a}" itemLabel="#{a.name}" />
+							            </p:selectOneMenu>
+								            
+										<p:message for="weekReward"/>
+									</h:panelGrid>
+						            
+						            <h:outputText value="#{lbl['achievement.label.gradeRewardAmount']}" styleClass="title-text" rendered="#{!gamificationSettingsBean.attendanceRewardSelected}"/>
+									<h:panelGrid styleClass="input-form-message-panel" rendered="#{!gamificationSettingsBean.attendanceRewardSelected}">
+										<p:inputText id="gradeRewardAmount" value="#{gamificationSettingsBean.selectedAchievement.gradeReward}">
+											<f:validateLongRange minimum="0" maximum="100"/>	
+										</p:inputText>
+										<p:message for="gradeRewardAmount"/>
+									</h:panelGrid>
+						            
+						            <h:outputText value="#{lbl['achievement.label.badgeReward']}" styleClass="title-text" />
+									<h:panelGrid style="width: 100%;">
+										<p:selectOneMenu id="badgeReward" converter="badgeConverter"
+											value="#{gamificationSettingsBean.selectedRewardBadge}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+							                <f:selectItem itemLabel="#{lbl['general.labels.pleaseSelect']}" itemValue="" noSelectionOption="true"/>
+							            	<f:selectItems value="#{gamificationSettingsBean.badges}" var="b" itemValue="#{b}" itemLabel="#{b.name}" />
+							            </p:selectOneMenu>
+										<p:message for="badgeReward" />
+						            </h:panelGrid>
+								</h:panelGrid>
+							</p:tab>
+						</p:tabView>
+						
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :tabView:achievementsTabForm:achievementTable :tabView:achievementsTabForm:achievement-operations" oncomplete="setDropDownCarat(); hideModalOnSuccess(args,'#achievement-modal');"
+								value="#{gamificationSettingsBean.achievementDialogButtonLabel}" styleClass="#{gamificationSettingsBean.achievementDialogButtonClass}" actionListener="#{gamificationSettingsBean.addOrUpdateAchievement()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+			</div>
+		</div>
+		
+		<div class="modal fade containing-div" id="achievement-image-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" 
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="achievement-image-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{lbl['achievement.label.pickImageHeader']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" update=":achievementManagementForm" onclick="hideLayeredModal('#achievement-image-modal', '#achievement-modal');" >
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<p:tabView id="achievementImageTabs">
+						<p:tab title="#{lbl['achievement.label.imageUploadTab']}">
+							<h:form id="achievementImageUpload" enctype="multipart/form-data">
+								<p:fileUpload fileUploadListener="#{gamificationSettingsBean.handleAchievementImageUpload}"  styleClass="grad-btn ln-tr add-button horizontal-uploader"
+														style="display: inline-block; box-shadow: none; width:100%;" fileLimit="1"
+														mode="advanced" dragDropSupport="false" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" sizeLimit="1250000"
+														oncomplete="hideLayeredModal('#achievement-image-modal', '#achievement-modal');"
+														update="@form :achievementManagementForm:achievementInputTabs:imagePreview" multiple="false"/>
+														
+								<h:outputText id="display" value="#{lbl['achievement.label.picRestrictions']}" styleClass="regular-body-text" />
+							</h:form>
+						</p:tab>
+						<p:tab title="#{lbl['achievement.label.imageSelectTab']}">
+							<h:form id="achievementImageSelect">
+								<p:selectOneMenu id="achievementImageFilter" 
+									value="#{gamificationSettingsBean.selectedResourceFolder}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+									<p:ajax update="@form" listener="#{gamificationSettingsBean.onAchievementResourceFolderSelect()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+					            	<f:selectItem itemLabel="#{lbl['general.labels.pleaseSelect']}"  itemValue="" noSelectionOption="true" />
+					            	<f:selectItems value="#{gamificationSettingsBean.resourceFolderItems}" />
+					            </p:selectOneMenu>
+					            
+					            <p:dataGrid var="ri" value="#{gamificationSettingsBean.resourceImages}" columns="5" layout="grid"  paginator="true" id="achievementImageGrid"
+					            	rows="25" paginatorAlwaysVisible="false">
+					            	<h:panelGrid columns="1" style="width: 100%; text-align: center;">
+					            		<p:commandLink actionListener="#{gamificationSettingsBean.setSelectedResourceImage(ri)}" update=":achievementManagementForm:achievementInputTabs:imagePreview" ajax="true"
+					            			oncomplete="hideLayeredModal('#achievement-image-modal', '#achievement-modal');" title="#{lbl['general.labels.select']}">
+										    <img src="#{ri.encodedImage}" width="64" height="64">
+										    </img>
+									    </p:commandLink>
+									</h:panelGrid>
+						        </p:dataGrid>
+					        </h:form>
+						</p:tab>
+					</p:tabView>
+				</h:panelGroup>
+			</div>
+		</div>
+		
+		<div class="modal fade" id="achievement-approval-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-trash-o fa-lg fa-lh-1"></i></span>
+						<span class="text">#{lbl['courseList.labels.unenrollConfirmation']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" onclick="hideModal('#achievement-approval-modal');" oncomplete="setPaginatorClasses(); setDropDownCarat();">
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<h:form id="achievementApprovalForm" styleClass="modal-dialog-form">
+						
+						<h:outputText value="#{lbl['general.labels.removalNotice']}" styleClass="title-text" />
+
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :tabView:achievementsTabForm:achievementTable :tabView:achievementsTabForm:achievement-operations" process="@form" oncomplete="hideModal('#achievement-approval-modal');"
+								value="#{lbl['general.labels.delete']}" styleClass="submit-input grad-btn ln-tr delete-button" actionListener="#{gamificationSettingsBean.deleteAchievement()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+			<!-- End Dialog -->
+		</div>
+	</ui:define>
+</ui:composition>

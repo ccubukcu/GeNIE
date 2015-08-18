@@ -1,0 +1,244 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.instructor.grade.title']}</ui:define>
+
+	<ui:define name="pageTitle">#{lbl['pages.instructor.grade.header']}</ui:define>
+	<ui:define name="pageDescription">#{lbl['pages.instructor.grade.description']}</ui:define>
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#grades_menu_item");
+		</script>
+
+		<article class="post single">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="entry clearfix">
+           				<div class="loader section-loader plan-table-loader"></div>
+						
+						<h:form id="planTableForm">
+							<h:panelGroup>
+								<p:selectOneMenu id="courseFilter" converter="semesterCourseConverter" 
+									value="#{gradeManagementBean.selectedCourse}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+									<p:ajax update="@form :tabView:examsTabForm :tabView:assignmentsTabForm :tabView:weeksTabForm :tabView:examsTabForm :tabView:fgTable" listener="#{gradeManagementBean.onCourseSelect()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+					                <f:selectItem itemDisabled="#{gradeManagementBean.courseSelected}" itemLabel="#{lbl['gradeManagement.label.selectSemesterCourse']}"  itemValue="" noSelectionOption="true" />
+					            	<f:selectItems value="#{gradeManagementBean.courses}" var="c" itemValue="#{c}" itemLabel="#{c.course.courseIdentifier} - #{c.semester.semesterIdentifier}" />
+					            </p:selectOneMenu>
+				            </h:panelGroup>
+						</h:form>
+						            
+							<p:tabView id="tabView" activeIndex="#{gradeManagementBean.selectedTab}">
+								<p:ajax event="tabChange" listener="#{gradeManagementBean.onTabChange}" />
+								<p:tab title="#{lbl['gradeManagement.label.examsTab']}">
+									<h:form id="examsTabForm">
+										<h:panelGrid>
+											<p:selectOneMenu id="examFilter" converter="gradeCriteriaConverter" 
+												value="#{gradeManagementBean.selectedExam}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+												<p:ajax update="@form" listener="#{gradeManagementBean.onExamSelect()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+								                <f:selectItem itemDisabled="#{gradeManagementBean.examSelected}" itemLabel="#{lbl['gradeManagement.label.selectExam']}"  itemValue="" noSelectionOption="true" />
+								            	<f:selectItems value="#{gradeManagementBean.exams}" var="e" itemValue="#{e}" itemLabel="#{e.name}" />
+								            </p:selectOneMenu>
+								            
+								            <p:commandButton update="@form :growl" oncomplete="setDropDownCarat(); setPaginatorClasses();" actionListener="#{gradeManagementBean.updateExamGrades()}" style="margin-top:18px;"
+												value="#{lbl['gradeManagement.labels.updateExamGrades']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+												disabled="#{!gradeManagementBean.examSelected}" />
+							            </h:panelGrid>
+							            
+							            <p:spacer height="10px"/>
+							            <p:dataTable id="exTable" widgetVar="dtExamTable" rendered="#{gradeManagementBean.examSelected}"
+												paginator="true" rows="#{gradeManagementBean.examStudents.size()}" paginatorAlwaysVisible="false"
+												emptyMessage="#{lbl['common.label.noRecordFound']}" 
+												value="#{gradeManagementBean.examStudents}" var="ex" rowKey="#{ex.student.id}"
+												styleClass="borderless" >
+												
+												<p:column headerText="#{lbl['general.label.student']}" styleClass="centered-student-name-column">
+													<h:outputText value="#{ex.student.fullName}" styleClass="d" />
+												</p:column>
+												
+												<p:column headerText="#{lbl['general.label.grade']}">
+													<p:inputText value="#{ex.grade.grade}" id="stuGradeExam" label="#{lbl['general.label.grade']}">
+														<f:validateLongRange minimum="0" maximum="100" />
+													</p:inputText>
+													<p:message for="stuGradeExam" />
+												</p:column>
+										</p:dataTable>
+						            </h:form>
+								</p:tab>
+								
+								<p:tab title="#{lbl['gradeManagement.label.assignmentTab']}">
+									<h:form id="assignmentsTabForm">
+										<h:panelGrid>
+											<p:selectOneMenu id="assignmentFilter" converter="assignmentConverter" 
+												value="#{gradeManagementBean.selectedAssignment}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+												<p:ajax update="@form" listener="#{gradeManagementBean.onAssignmentSelect()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+								                <f:selectItem itemDisabled="#{gradeManagementBean.assignmentSelected}" itemLabel="#{lbl['gradeManagement.label.selectAssignment']}"  itemValue="" noSelectionOption="true" />
+								            	<f:selectItems value="#{gradeManagementBean.assignments}" var="a" itemValue="#{a}" itemLabel="#{a.name}" />
+								            </p:selectOneMenu>
+								            
+								            <p:commandButton update="@form :growl" oncomplete="setDropDownCarat(); setPaginatorClasses();" actionListener="#{gradeManagementBean.updateAssignmentGrades()}" style="margin-top:18px;"
+												value="#{lbl['gradeManagement.labels.updateAssignmentGrades']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+												disabled="#{!gradeManagementBean.assignmentSelected}" />
+							            </h:panelGrid>
+							            
+							            <p:spacer height="10px"/>
+							            <p:dataTable id="asgnTable" widgetVar="dtAssignmentTable" rendered="#{gradeManagementBean.assignmentSelected}"
+												paginator="true" rows="#{gradeManagementBean.assignmentStudents.size()}" paginatorAlwaysVisible="false"
+												emptyMessage="#{lbl['common.label.noRecordFound']}" 
+												value="#{gradeManagementBean.assignmentStudents}" var="asgn" rowKey="#{asgn.student.id}"
+												styleClass="borderless" >
+												
+												<p:column headerText="#{lbl['general.label.student']}" styleClass="centered-student-name-column">
+													<h:outputText value="#{asgn.student.fullName}" styleClass="d" />
+												</p:column>
+												
+												<p:column headerText="#{lbl['general.label.grade']}">
+													<p:inputText value="#{asgn.grade.grade}" id="stuGradeAsgn" label="#{lbl['general.label.grade']}">
+														<f:validateLongRange minimum="0" maximum="100" />
+													</p:inputText>
+													<p:message for="stuGradeAsgn" />
+												</p:column>
+												
+												<p:column headerText="#{lbl['general.label.downloadSubmission']}" styleClass="centered-table-column">
+													<p:commandButton value="" ajax="false" styleClass="fa fa-download fa-lg">
+												        <p:fileDownload value="#{gradeManagementBean.downloadAssignmentSubmission(asgn.student.username)}" />
+												    </p:commandButton>
+												</p:column>
+												
+												<p:column headerText="#{lbl['assignment.label.uploadDate']}">
+													<h:outputText value="#{asgn.submission.creationTimeString}" styleClass="d" />
+												</p:column>
+										</p:dataTable>
+						            </h:form>
+								</p:tab>
+								
+								<p:tab title="#{lbl['gradeManagement.label.attendanceTab']}">
+									<h:form id="weeksTabForm">
+										<h:panelGrid>
+											<p:selectOneMenu id="weekFilter" 
+												value="#{gradeManagementBean.selectedWeek}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+												<p:ajax update="@form" listener="#{gradeManagementBean.onWeekSelect()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+								                <f:selectItem itemDisabled="#{gradeManagementBean.weekSelected}" itemLabel="#{lbl['gradeManagement.label.selectWeek']}"  itemValue="" noSelectionOption="true" />
+								            	<f:selectItems value="#{gradeManagementBean.weeks}"/>
+								            </p:selectOneMenu>
+								            
+								            <p:commandButton update="@form :growl" oncomplete="setDropDownCarat(); setPaginatorClasses();" actionListener="#{gradeManagementBean.updateAttendances()}" style="margin-top:18px;"
+												value="#{lbl['gradeManagement.labels.updateAttendances']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+												disabled="#{!gradeManagementBean.weekSelected}" />
+							            </h:panelGrid>
+							            
+							            <p:spacer height="10px"/>
+							            <p:dataTable id="asgnTable" widgetVar="dtAssignmentTable" rendered="#{gradeManagementBean.weekSelected}"
+												paginator="true" rows="#{gradeManagementBean.attendanceStudents.size()}" paginatorAlwaysVisible="false"
+												emptyMessage="#{lbl['common.label.noRecordFound']}" 
+												value="#{gradeManagementBean.attendanceStudents}" var="asgn" rowKey="#{asgn.student.id}"
+												styleClass="borderless" >
+												
+												<p:column headerText="#{lbl['general.label.student']}" styleClass="centered-student-name-column">
+													<h:outputText value="#{asgn.student.fullName}" styleClass="d" />
+												</p:column>
+												
+												<p:column headerText="#{lbl['general.label.didAttend']}" styleClass="centered-table-column">
+													<p:selectBooleanCheckbox value="#{asgn.attendance.attended}" id="stuAttendance" label="#{lbl['general.label.didAttend']}" />
+													<p:message for="stuAttendance" />
+												</p:column>
+										</p:dataTable>
+						            </h:form>
+								</p:tab>
+								
+								<p:tab title="#{lbl['gradeManagement.label.otherTab']}">
+									<h:form id="otherGradesTabForm">
+										<h:panelGrid>
+											<p:selectOneMenu id="otherFilter" converter="gradeCriteriaConverter" 
+												value="#{gradeManagementBean.selectedOtherGrade}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+												<p:ajax update="@form" listener="#{gradeManagementBean.onOtherGradeSelect()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+								                <f:selectItem itemDisabled="#{gradeManagementBean.otherGradeSelected}" itemLabel="#{lbl['gradeManagement.label.selectOtherGrade']}"  itemValue="" noSelectionOption="true" />
+								            	<f:selectItems value="#{gradeManagementBean.otherGrades}" var="o" itemValue="#{o}" itemLabel="#{o.name}" />
+								            </p:selectOneMenu>
+								            
+								            <p:commandButton update="@form :growl" oncomplete="setDropDownCarat(); setPaginatorClasses();" actionListener="#{gradeManagementBean.updateOtherGrades()}" style="margin-top:18px;"
+												value="#{lbl['gradeManagement.labels.updateOtherGrades']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+												disabled="#{!gradeManagementBean.otherGradeSelected}" />
+							            </h:panelGrid>
+							            
+							            <p:spacer height="10px"/>
+							            <p:dataTable id="ogTable" widgetVar="dtOtherGradeTable" rendered="#{gradeManagementBean.otherGradeSelected}"
+												paginator="true" rows="#{gradeManagementBean.otherGradeStudents.size()}" paginatorAlwaysVisible="false"
+												emptyMessage="#{lbl['common.label.noRecordFound']}" 
+												value="#{gradeManagementBean.otherGradeStudents}" var="og" rowKey="#{og.student.id}"
+												styleClass="borderless" >
+												
+												<p:column headerText="#{lbl['general.label.student']}" styleClass="centered-student-name-column">
+													<h:outputText value="#{og.student.fullName}" styleClass="d" />
+												</p:column>
+												
+												<p:column headerText="#{lbl['general.label.grade']}">
+													<p:inputText value="#{og.grade.grade}" id="stuGradeOther" label="#{lbl['general.label.grade']}">
+														<f:validateLongRange minimum="0" maximum="100" />
+													</p:inputText>
+													<p:message for="stuGradeOther" />
+												</p:column>
+										</p:dataTable>
+						            </h:form>
+								</p:tab>
+								
+								<p:tab title="#{lbl['gradeManagement.label.finalGradesTab']}">
+									<p:dataTable id="fgTable" widgetVar="dtFgTable"
+											paginator="true" rows="#{gradeManagementBean.gradeStudents.size()}" paginatorAlwaysVisible="false"
+											emptyMessage="#{lbl['common.label.noRecordFound']}" 
+											value="#{gradeManagementBean.gradeStudents}" var="g" rowKey="#{g.student.username}"
+											styleClass="borderless" >
+											
+											<p:column headerText="#{lbl['general.label.student']}" styleClass="centered-student-name-column">
+												<h:outputText value="#{g.student.fullName}" styleClass="d" />
+											</p:column>
+											
+											<p:columns value="#{gradeManagementBean.examGradeColumns}" var="col">
+												<f:facet name="header">
+									                <h:outputText value="#{col.label}" />
+									            </f:facet>
+									            <h:outputText value="#{g.examGrades.get(col.order).grade}" />
+											</p:columns>
+											
+											<p:column headerText="#{lbl['gradeManagement.label.assignmentGrades']}">
+												<h:outputText value="#{g.finalAssignmentGrades.grade}" styleClass="d" />
+											</p:column>
+											
+											<p:column headerText="#{lbl['gradeManagement.label.attendanceGrade']}">
+												<h:outputText value="#{g.attendanceGrade.grade}" styleClass="d" />
+											</p:column>
+											
+											<p:column headerText="#{lbl['gradeManagement.label.gamificationGrade']}">
+												<h:outputText value="#{g.gamificationGrade.grade}" styleClass="d" />
+											</p:column>
+											
+											<p:columns value="#{gradeManagementBean.otherGradeColumns}" var="col">
+												<f:facet name="header">
+									                <h:outputText value="#{col.label}" />
+									            </f:facet>
+									            <h:outputText value="#{g.otherGrades.get(col.order).grade}" />
+											</p:columns>
+											
+											<p:column headerText="#{lbl['general.label.overallGrade']}">
+												<h:outputText value="#{g.finalGrade}" styleClass="d" />
+											</p:column>
+									</p:dataTable>
+								</p:tab>
+							</p:tabView>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		</article>
+	</ui:define>
+</ui:composition>

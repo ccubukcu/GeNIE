@@ -1,0 +1,71 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.settings.title']}</ui:define>
+
+	<ui:define name="pageTitle">#{lbl['pages.settings.header']}</ui:define>
+	<ui:define name="pageDescription">#{lbl['pages.settings.description']}</ui:define>
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#settings_menu_item");
+		</script>
+
+		<article class="post single">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4 sidebar">
+					<div class="sidebar-widget profile-pic">
+						<img style="padding-top: 5px; width: 270px; height: 270px;"
+							src="#{profileBean.user.encodedImage}"
+							class="img-responsive" alt="" />
+					</div>
+				</div>
+
+				<div class="col-md-8 main-content col-mc-section">
+					<div class="entry clearfix">
+						<h:panelGrid columns="2" columnClasses="panelGrid-label-col-2, panelGrid-input-col-2">
+							<h:outputText styleClass="title-text" value="#{lbl['user.label.realName']}"/>
+							<h:outputText styleClass="title-text" value="#{profileBean.user.fullName}"/>
+							
+							<h:outputText styleClass="title-text" value="#{lbl['user.label.aboutThem']}"/>
+							<h:outputText styleClass="regular-body-text" value="#{profileBean.user.biography}"/>
+						</h:panelGrid>
+					</div>
+				</div>
+				
+				<h:panelGroup layout="block" styleClass="col-md-8 main-content col-mc-section" rendered="#{profileBean.badgesRendered}">
+					<div class="entry clearfix">
+						<h4 class="h4-section-heading" style="margin-bottom: 16px;">#{lbl['user.label.badges']}</h4>
+						<p:dataGrid var="sb" value="#{profileBean.userBadges}" columns="4" layout="grid"  id="badgeImageGrid1"
+					            	rows="#{profileBean.rowCount}" paginator="false" >
+	                        <div class="course clearfix badge-wrapper">
+	                        	<h:panelGroup layout="block" styleClass="course-image" style="float: left; margin-right: 8px;" id="badge-image">
+	                                <img src="#{sb.encodedImage}" width="128" height="128" class="img-responsive incomplete-objective wh-128" alt=""/>
+	                            </h:panelGroup>
+
+								<p:tooltip for="badge-image">
+									<h:outputText value="#{lbl['user.label.badgeName']}" escape="false" />
+									<h:outputText value="#{sb.name}" style="font-weight: bold;" escape="false" />
+									<br />
+									<h:outputText value="#{lbl['user.label.badgeFrom']}" escape="false" />
+									<h:outputText value="#{sb.semesterCourse.course.courseIdentifier} - #{sb.semesterCourse.semester.semesterIdentifier}" style="font-weight: bold;" escape="false" />
+								</p:tooltip>
+	                        </div><!-- End Course -->
+	                    </p:dataGrid>
+					</div>
+				</h:panelGroup>
+			</div>
+		</div>
+		
+		</article>
+	</ui:define>
+</ui:composition>

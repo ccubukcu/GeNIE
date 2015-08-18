@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+	version="2.0">
+	<application>
+		<locale-config>
+			<default-locale>tr</default-locale>
+			<supported-locale>en</supported-locale>
+			<supported-locale>tr</supported-locale>
+		</locale-config>
+
+
+		<!-- From API documentation for javax.faces.el.VariableResolver: Deprecated. 
+			This has been replaced by javax.el.ELResolver when operating with a null 
+			base argument. VariableResolver represents a pluggable mechanism for resolving 
+			a top-level variable reference at evaluation time. -->
+		<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+
+		<resource-bundle>
+			<base-name>localization.menu</base-name>
+			<var>menu</var>
+		</resource-bundle>
+
+		<resource-bundle>
+			<base-name>localization.labels</base-name>
+			<var>lbl</var>
+		</resource-bundle>
+
+		<resource-bundle>
+			<base-name>localization.messages</base-name>
+			<var>msg</var>
+		</resource-bundle>
+
+	</application>
+</faces-config>

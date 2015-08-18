@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true" xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:security="http://www.springframework.org/schema/security" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+			http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+			http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+
+	<task:annotation-driven />
+
+<!-- 	<bean id="jsfLanguageSwitcher" class="JSFLanguageSwitcher" scope="session" /> -->
+	
+	<bean id="baseDAO" class="com.genie.dao.impl.BaseDAOImpl" />
+	<bean id="userDAO" class="com.genie.dao.impl.UserDAOImpl" />
+	<bean id="courseDAO" class="com.genie.dao.impl.CourseDAOImpl" />
+	<bean id="courseMaterialDAO" class="com.genie.dao.impl.CourseMaterialDAOImpl" />
+	<bean id="documentDAO" class="com.genie.dao.impl.DocumentDAOImpl" />
+	<bean id="schoolYearDAO" class="com.genie.dao.impl.SchoolYearDAOImpl" />
+	<bean id="semesterCourseDAO" class="com.genie.dao.impl.SemesterCourseDAOImpl" />
+	<bean id="semesterDAO" class="com.genie.dao.impl.SemesterDAOImpl" />
+	<bean id="coursePlanDAO" class="com.genie.dao.impl.CoursePlanDAOImpl" />
+	<bean id="systemPropertiesDAO" class="com.genie.dao.impl.SystemPropertiesDAOImpl" />
+	<bean id="assignmentDAO" class="com.genie.dao.impl.AssignmentDAOImpl" />
+	<bean id="authorityDAO" class="com.genie.dao.impl.AuthorityDAOImpl" />
+	<bean id="auditLogDAO" class="com.genie.dao.impl.AuditLogDAOImpl" />
+	<bean id="gamificationDAO" class="com.genie.dao.impl.GamificationDAOImpl" />
+	
+	<bean id="filterMultipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="100000000"/>
+	</bean>
+</beans>

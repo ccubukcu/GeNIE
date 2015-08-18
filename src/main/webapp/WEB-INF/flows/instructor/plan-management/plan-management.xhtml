@@ -1,0 +1,393 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.instructor.plan.title']}</ui:define>
+
+	<ui:define name="pageTitle">#{lbl['pages.instructor.plan.header']}</ui:define>
+	<ui:define name="pageDescription">#{lbl['pages.instructor.plan.description']}</ui:define>
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#plan_menu_item");
+		</script>
+
+		<article class="post single">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="entry clearfix">
+           				<div class="loader section-loader plan-table-loader"></div>
+						
+						<h:form id="planTableForm">
+							<h:panelGroup>
+								<p:selectOneMenu id="courseFilter" converter="semesterCourseConverter" 
+									value="#{planManagementBean.selectedCourse}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-long">
+									<p:ajax update="tabView:operations tabView:planTable tabView:assignment-table tabView:assignment-operations" listener="#{planManagementBean.onCourseSelect()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+					                <f:selectItem itemDisabled="#{planManagementBean.courseSelected}" itemLabel="#{lbl['planManagement.label.selectSemesterCourse']}"  itemValue="" noSelectionOption="true" />
+					            	<f:selectItems value="#{planManagementBean.courses}" var="c" itemValue="#{c}" itemLabel="#{c.course.courseIdentifier} - #{c.semester.semesterIdentifier}" />
+					            </p:selectOneMenu>
+				            </h:panelGroup>
+						            
+							<p:tabView id="tabView">
+								<p:tab title="#{lbl['planManagement.label.planAndMaterials']}" id="planAndMatTab">
+									<h:panelGrid columns="4" styleClass="management-buttons" id="operations">
+										<p:commandButton update="@form :growl :modal-content" oncomplete="openModalWithDropdown('#add-modal');" actionListener="#{planManagementBean.prepareAddDialog()}"
+											value="#{lbl['general.labels.add']}" styleClass="submit-input management-button add-button grad-btn ln-tr" 
+											disabled="#{planManagementBean.addButtonDisabled}"/>
+											
+										<p:commandButton update="@form :growl :modal-content" oncomplete="openModalWithDropdown('#add-modal');" actionListener="#{planManagementBean.prepareUpdateDialog()}"
+											value="#{lbl['general.labels.edit']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+											disabled="#{planManagementBean.buttonsDisabled}" />
+											
+										<p:commandButton update="@form :growl :document-modal-content" oncomplete="openModalWithDropdown('#document-modal');" actionListener="#{planManagementBean.prepareDocumentDialog()}"
+											value="#{lbl['planManagement.label.files']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+											disabled="#{planManagementBean.buttonsDisabled}" />
+											
+										<p:commandButton update="@form :growl :modal-content" oncomplete="openModal('#approval-modal')"
+											value="#{lbl['general.labels.delete']}" styleClass="submit-input management-button delete-button grad-btn ln-tr"
+											disabled="#{planManagementBean.deleteButtonDisabled()}" />
+											
+									</h:panelGrid>
+									
+									<p:spacer height="10px"/>
+									<p:dataTable id="planTable" var="plan" widgetVar="dtPlanTable"
+												paginator="true" rows="10" paginatorAlwaysVisible="false"
+												emptyMessage="#{lbl['common.label.noRecordFound']}" selection="#{planManagementBean.selectedPlan}"
+												value="#{planManagementBean.plans}" rowKey="#{plan.id}" selectionMode="single"
+												styleClass="borderless" >
+												
+												<p:ajax event="rowSelect" update=":planTableForm:tabView:operations"></p:ajax>
+												<p:ajax event="rowUnselect" update=":planTableForm:tabView:operations"></p:ajax>
+										
+										<p:column headerText="#{lbl['plan.label.planOrder']}">
+											<h:outputText value="#{plan.planOrder}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['plan.label.name']}">
+											<h:outputText value="#{plan.coursePlanTitle}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['plan.label.planLength']}">
+											<h:outputText value="#{plan.planLength}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['plan.label.description']}">
+											<h:outputText value="#{plan.description}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['plan.label.materials']}" >
+											<h:outputText value="#{plan.materials.size()}" styleClass="d" />
+										</p:column>
+									</p:dataTable>
+								</p:tab>
+								
+								<p:tab title="#{lbl['planManagement.label.assignments']}">
+									<h:panelGrid columns="3" styleClass="management-buttons" id="assignment-operations">
+										<p:commandButton update="@form :growl :assgignment-modal-content" oncomplete="openModalWithDropdown('#assignment-modal');" actionListener="#{planManagementBean.prepareAddAssignmentDialog()}"
+											value="#{lbl['general.labels.add']}" styleClass="submit-input management-button add-button grad-btn ln-tr" 
+											disabled="#{planManagementBean.addButtonDisabled}"/>
+											
+										<p:commandButton update="@form :growl :assgignment-modal-content" oncomplete="openModalWithDropdown('#assignment-modal');" actionListener="#{planManagementBean.prepareUpdateAssignmentDialog()}"
+											value="#{lbl['general.labels.edit']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+											disabled="#{planManagementBean.assignmentButtonsDisabled}" />
+											
+										<p:commandButton update="@form :growl" oncomplete="openModal('#assignment-approval-modal')"
+											value="#{lbl['general.labels.delete']}" styleClass="submit-input management-button delete-button grad-btn ln-tr"
+											disabled="#{planManagementBean.assignmentButtonsDisabled}" />
+											
+									</h:panelGrid>
+									<p:spacer height="10px"/>
+									<p:dataTable id="assignment-table" var="a" widgetVar="dtAssignmentTable"
+												paginator="true" rows="10" paginatorAlwaysVisible="false"
+												emptyMessage="#{lbl['common.label.noRecordFound']}" selection="#{planManagementBean.selectedAssignment}"
+												value="#{planManagementBean.assignments}" rowKey="#{a.id}" selectionMode="single"
+												styleClass="borderless" >
+												
+												<p:ajax event="rowSelect" update=":planTableForm:tabView:assignment-operations"></p:ajax>
+												<p:ajax event="rowUnselect" update=":planTableForm:tabView:assignment-operations"></p:ajax>
+										
+										<p:column headerText="#{lbl['plan.label.planOrder']}">
+											<h:outputText value="#{a.plan.planOrder}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['plan.label.name']}">
+											<h:outputText value="#{a.plan.coursePlanTitle}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['assignment.label.name']}">
+											<h:outputText value="#{a.name}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['assignment.label.weight']}">
+											<h:outputText value="#{a.weight}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['assignment.label.duedate']}">
+											<h:outputText value="#{a.dueDateString}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['course.label.longDesc']}">
+											<h:outputText id ="desc" value="#{planManagementBean.getDescriptionForTooltip(a.description)}"/>
+											<p:tooltip for="desc" value="#{a.description}" styleClass="tooltips"/>
+										</p:column>
+										
+									</p:dataTable>
+								</p:tab>
+							</p:tabView>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		</article>
+		
+		<div class="modal fade containing-div" id="add-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content with-dropdown" id="modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{planManagementBean.dialogHeader}</span>
+							
+							<p:commandLink styleClass="close-modal fr" update=":planTableForm:tabView:operations :planTableForm:tabView:planTable" onclick="hideModal('#add-modal');" oncomplete="setPaginatorClasses(); setDropDownCarat();" actionListener="#{planManagementBean.clearSelectedPlan()}">
+						        <i class="fa fa-close fa-2x"></i>
+						    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="planManagementForm" styleClass="modal-dialog-form">
+						
+						<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol">
+							<h:outputText value="#{lbl['plan.label.name']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="plan" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="200"
+									value="#{planManagementBean.selectedPlan.coursePlanTitle}"/>
+								<p:message for="plan" id="planMsg"/>
+							</h:panelGrid>
+							
+							<h:outputText value="#{lbl['plan.label.planOrder']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="planOrder" value="#{planManagementBean.selectedPlan.planOrder}">
+									<f:validateLongRange minimum="1" maximum="25" />
+								</p:inputText>
+	       						<p:slider for="planOrder" minValue="1" maxValue="25"/>
+	       						<p:message for="planOrder" id="planOrderMsg"/>
+       						</h:panelGrid>
+							
+							<h:outputText value="#{lbl['plan.label.planLength']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="planLength" value="#{planManagementBean.selectedPlan.planLength}" >
+									<f:validateLongRange minimum="0" maximum="25" />
+								</p:inputText>
+	       						<p:slider for="planLength" minValue="0" maxValue="25"/>
+	       						<p:message for="planLength" id="planLengthMsg"/>
+       						</h:panelGrid>
+						</h:panelGrid>
+       						
+						<h:outputText value="#{lbl['plan.label.description']}" styleClass="title-text" style="margin-top: 12px; display:block;"/>
+						<h:outputText id="longDesc" value="#{lbl['planManagement.label.descInfo']}" styleClass="regular-body-text" />
+						<p:inputTextarea maxlength="1000" value="#{planManagementBean.selectedPlan.description}"/>
+						
+						<div class="input clearfix">
+							<p:commandButton update="planMsg planOrderMsg planLengthMsg :growl :planTableForm:tabView:operations :planTableForm:tabView:planTable" process="@form" oncomplete="hideModalOnSuccessWithDropdown(args, '#add-modal');"
+								value="#{planManagementBean.dialogButtonLabel}" styleClass="#{planManagementBean.dialogButtonClass}" actionListener="#{planManagementBean.addOrUpdate()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+		</div>
+		
+		<div class="modal fade containing-div" id="document-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content with-dropdown" id="document-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{lbl['plan.label.materialsHeader']}</span>
+							
+							<p:commandLink styleClass="close-modal fr" update=":planTableForm:tabView:operations :planTableForm:tabView:planTable" onclick="hideModal('#document-modal');" oncomplete="setPaginatorClasses(); setDropDownCarat();">
+						        <i class="fa fa-close fa-2x"></i>
+						    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="planDocumentForm" styleClass="modal-dialog-form" enctype="multipart/form-data">
+						<p:fileUpload fileUploadListener="#{planManagementBean.handleFileUpload}" styleClass="grad-btn ln-tr horizontal-uploader" style="display: inline-block;"
+								mode="advanced" dragDropSupport="false" value="#{lbl['planManagement.label.uploadCourseMaterial']}"
+								update=":cmTableForm:cmTable @form" multiple="true"/>
+		                        
+						<p:separator style="margin-top: 15px; margin-bottom: 15px;"></p:separator>
+						
+					</h:form>
+		            
+		            <h:form id="cmTableForm">
+		                 <p:dataTable id="cmTable" var="cm" widgetVar="dtCmTable"
+										paginator="true" rows="10" paginatorAlwaysVisible="false"
+										emptyMessage="#{lbl['common.label.noRecordFound']}" selection="#{planManagementBean.selectedMaterial}"
+										value="#{planManagementBean.materials}" rowKey="#{cm.id}" selectionMode="single"
+										styleClass="borderless" tableStyleClass="content-fitting-table">
+										
+								<p:column headerText="#{lbl['material.label.filename']}">
+									<h:outputText value="#{cm.document.filename}#{cm.document.filetype}" styleClass="d" />
+								</p:column>
+								
+								<p:column headerText="#{lbl['material.label.filesize']}">
+									<h:outputText value="#{cm.document.filesizeString}" styleClass="d" />
+								</p:column>
+								
+								<p:column>
+				                    <p:commandButton styleClass="fa fa-close fa-lg" update="@form" title=""
+				                        actionListener="#{planManagementBean.deleteCourseMaterial(cm)}"
+				                        />
+				                </p:column>
+								
+							</p:dataTable>
+		                 
+		                 				
+						<div class="input clearfix">
+							<p:commandButton update=":growl" oncomplete="hideModal('#document-modal');"
+								value="#{lbl['general.labels.close']}" styleClass="submit-input management-button clear-button grad-btn ln-tr" immediate="true"/>
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+		</div>
+		
+		<div class="modal fade containing-div" id="assignment-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content with-dropdown" id="assgignment-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{planManagementBean.assignmentDialogHeader}</span>
+							
+							<p:commandLink styleClass="close-modal fr" update=":planTableForm:tabView:assignment-table :planTableForm:tabView:assignment-operations" onclick="hideModal('#assignment-modal');" oncomplete="setPaginatorClasses(); setDropDownCarat();" actionListener="#{planManagementBean.clearSelectedAssignment()}">
+						        <i class="fa fa-close fa-2x"></i>
+						    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="assignmentManagementForm" styleClass="modal-dialog-form">
+						<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol">
+							<h:outputText value="#{lbl['general.labels.coursePlan']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:selectOneMenu id="assgnPlan" converter="coursePlanConverter" required="true" requiredMessage="#{msg['error.select_value']}"
+									value="#{planManagementBean.selectedFilterPlan}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="dialog-dropdown" >
+					                <f:selectItem itemLabel="#{lbl['general.labels.pleaseSelect']}" itemValue="" noSelectionOption="true" />
+					                <f:selectItems value="#{planManagementBean.plans}" var="plan" itemValue="#{plan}" itemLabel="#{plan.coursePlanTitle}" />
+					            </p:selectOneMenu>
+					            <p:message for="assgnPlan"/>
+							</h:panelGrid>
+							
+							<h:outputText value="#{lbl['assignment.label.name']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="asgnName" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="200"
+									value="#{planManagementBean.selectedAssignment.name}"/>
+								<p:message for="asgnName"/>
+							</h:panelGrid>
+							
+							<h:outputText value="#{lbl['assignment.label.duedate']}" styleClass="title-text"/>
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputMask id="duedate" mask="99/99/9999" value="#{planManagementBean.dueDate}"
+									 required="true" requiredMessage="#{msg['error.enter_value']}"/>
+								<p:message for="duedate" />
+							</h:panelGrid>
+							
+							<h:outputText value="#{lbl['assignment.label.weight']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="asgnWeight" required="true" requiredMessage="#{msg['error.enter_value']}"
+									value="#{planManagementBean.selectedAssignment.weight}">
+									<f:validateLongRange minimum="0" maximum="100" />
+								</p:inputText>
+								<p:message for="asgnWeight"/>
+							</h:panelGrid>
+     					</h:panelGrid>
+     					
+						<h:outputText value="#{lbl['assignment.label.description']}" styleClass="title-text" style="margin-top: 12px; display:block;"/>
+						<h:outputText id="longDesc" value="#{lbl['assignment.label.descInfo']}" styleClass="regular-body-text" />
+						<p:inputTextarea maxlength="5000" value="#{planManagementBean.selectedAssignment.description}"/>
+						
+						<div class="input clearfix">
+							<p:commandButton update=":growl @form :planTableForm:tabView:assignment-table :planTableForm:tabView:assignment-operations" process="@form" oncomplete="hideModalOnSuccessWithDropdown(args, '#assignment-modal');"
+								value="#{planManagementBean.assignmentDialogButtonLabel}" styleClass="#{planManagementBean.assignmentDialogButtonClass}" actionListener="#{planManagementBean.addOrUpdateAssignment()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+		</div>
+		
+		<div class="modal fade" id="approval-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-trash-o fa-lg fa-lh-1"></i></span>
+						<span class="text">#{lbl['courseList.labels.unenrollConfirmation']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" onclick="hideModal('#approval-modal');" oncomplete="setPaginatorClasses(); setDropDownCarat();">
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<h:form id="approvalForm" styleClass="modal-dialog-form">
+						
+						<h:outputText value="#{lbl['general.labels.removalNotice']}" styleClass="title-text" />
+
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :planTableForm:tabView:operations :planTableForm:tabView:planTable" process="@form" oncomplete="hideModal('#approval-modal');"
+								value="#{lbl['general.labels.delete']}" styleClass="submit-input grad-btn ln-tr delete-button" actionListener="#{planManagementBean.delete()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+			<!-- End Dialog -->
+		</div>
+			
+		<div class="modal fade" id="assignment-approval-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-trash-o fa-lg fa-lh-1"></i></span>
+						<span class="text">#{lbl['courseList.labels.unenrollConfirmation']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" onclick="hideModal('#assignment-approval-modal');" oncomplete="setPaginatorClasses(); setDropDownCarat();">
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<h:form id="assignmentApprovalForm" styleClass="modal-dialog-form">
+						
+						<h:outputText value="#{lbl['general.labels.removalNotice']}" styleClass="title-text" />
+
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :planTableForm:tabView:assignment-table :planTableForm:tabView:assignment-operations" process="@form" oncomplete="hideModal('#assignment-approval-modal');"
+								value="#{lbl['general.labels.delete']}" styleClass="submit-input grad-btn ln-tr delete-button" actionListener="#{planManagementBean.deleteAssignment()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+			<!-- End Dialog -->
+		</div>
+		<!-- End Login Modal -->
+	</ui:define>
+</ui:composition>
