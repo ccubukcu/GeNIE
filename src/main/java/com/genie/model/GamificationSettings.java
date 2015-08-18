@@ -43,7 +43,7 @@ public class GamificationSettings extends BaseEntity implements LoggableEntity {
 	@Column(name = "badges_enabled")
 	private boolean badgesEnabled;
 
-	@Column(name = "achievementsEnabled")
+	@Column(name = "achievements_enabled")
 	private boolean achievementsEnabled;
 
 	@Column(name = "points_name")

@@ -50,7 +50,7 @@ public class StudentGamificationSettings extends BaseEntity implements LoggableE
 	@Column(name = "badges_enabled")
 	private boolean badgesEnabled;
 
-	@Column(name = "achievementsEnabled")
+	@Column(name = "achievements_enabled")
 	private boolean achievementsEnabled;
 
 	public Long getId() {

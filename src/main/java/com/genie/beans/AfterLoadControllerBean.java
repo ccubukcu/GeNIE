@@ -1,8 +1,10 @@
 package com.genie.beans;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,225 +85,251 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 		
 		User instructor = createUser("instructor", "instructor", Role.ROLE_INSTRUCTOR.toString());
 		userDAO.saveUserWithAuthority(instructor);
+
+		List<User> instructors = new ArrayList<User>();
+		for(int insNr = 1; insNr<26; insNr++) {
+			User instr = createUser("instructor" + insNr, "instructor" + insNr, Role.ROLE_INSTRUCTOR.toString());
+			userDAO.saveUserWithAuthority(instr);
+			instructors.add(instr);
+		}
 		
-		User d = createUser("d", "d", Role.ROLE_DEMONSTRATOR.toString());
-		userDAO.saveUserWithAuthority(d);
-		
-		User demo = createUser("demonstrator", "demonstrator", Role.ROLE_DEMONSTRATOR.toString());
-		userDAO.saveUserWithAuthority(demo);
+		List<User> students = new ArrayList<User>();
+		for(int stNr = 1; stNr<26; stNr++) {
+			User stu = createUser("student" + stNr, "student" + stNr, Role.ROLE_STUDENT.toString());
+			userDAO.saveUserWithAuthority(stu);
+			students.add(stu);
+		}
 		
 		//
 		// Create School Year
 		//
+		SchoolYear yr1 = new SchoolYear();
+		yr1.setYearIdentifier("Year of 2014/2015");
+		yr1.setStartDate(stringToDate("18/09/2014"));
+		yr1.setEndDate(stringToDate("21/08/2015"));
+		yr1.setNotes("This is the year of 2014/2015 which starts on 18/09/2014 and ends on 21/08/2015");
+		yearDAO.save(yr1);
+		
 		SchoolYear yr = new SchoolYear();
-		yr.setYearIdentifier("Regular Year 1");
-		yr.setStartDate(stringToDate("10/09/2015"));
-		yr.setEndDate(stringToDate("21/08/2016"));
-		yr.setNotes("Regular Year Notes for testing purposes.");
+		yr.setYearIdentifier("Year of 2015/2016");
+		yr.setStartDate(stringToDate("14/10/2015"));
+		yr.setEndDate(stringToDate("24/09/2016"));
+		yr1.setNotes("This is the year of 2015/2016 which starts on 14/10/2015 and ends on 24/09/2016");
 		yearDAO.save(yr);
 		
 		//
-		// Create 2 semesters
+		// Create 4 semesters
 		//
+		List<Semester> semesters = new ArrayList<Semester>();
 		Semester sm1 = new Semester();
 		sm1.setSchoolYearId(yr.getId());
-		sm1.setSemesterIdentifier("Regular Semester 1");
+		sm1.setSemesterIdentifier("Semester 1 of 14/15");
 		sm1.setSemesterOrder(1);
-		sm1.setStartDate(stringToDate("10/09/2015"));
-		sm1.setEndDate(stringToDate("21/12/2015"));
-		sm1.setNotes("Regular Semester 1 Notes for testing purposes.");
+		sm1.setStartDate(stringToDate("18/09/2014"));
+		sm1.setEndDate(stringToDate("21/12/2014"));
+		sm1.setNotes("Semester 1 of year 2014/2015 which starts on 18/09/2014 and ends on 21/12/2014");
 		semesterDAO.save(sm1);
+		semesters.add(sm1);
 		
 		Semester sm2 = new Semester();
 		sm2.setSchoolYearId(yr.getId());
-		sm2.setSemesterIdentifier("Regular Semester 2");
+		sm2.setSemesterIdentifier("Semester 2 of 14/15");
 		sm2.setSemesterOrder(2);
-		sm2.setStartDate(stringToDate("21/12/2015"));
-		sm2.setEndDate(stringToDate("05/06/2016"));
-		sm2.setNotes("Regular Semester 2 Notes for testing purposes.");
+		sm2.setStartDate(stringToDate("12/01/2015"));
+		sm2.setEndDate(stringToDate("05/06/2015"));
+		sm2.setNotes("Semester 2 of year 2014/2015 which starts on 12/01/2015 and ends on 05/06/2015");
 		semesterDAO.save(sm2);
+		semesters.add(sm2);
+		
+		Semester sm21 = new Semester();
+		sm21.setSchoolYearId(yr1.getId());
+		sm21.setSemesterIdentifier("Semester 1 of 15/16");
+		sm21.setSemesterOrder(1);
+		sm21.setStartDate(stringToDate("14/10/2015"));
+		sm21.setEndDate(stringToDate("29/01/2016"));
+		sm21.setNotes("Semester 1 of year 2015/2016 which starts on 14/10/2015 and ends on 29/01/2016");
+		semesterDAO.save(sm21);
+		semesters.add(sm21);
+		
+		Semester sm22 = new Semester();
+		sm22.setSchoolYearId(yr1.getId());
+		sm22.setSemesterIdentifier("Semester 2 of 15/16");
+		sm22.setSemesterOrder(2);
+		sm22.setStartDate(stringToDate("19/02/2016"));
+		sm22.setEndDate(stringToDate("30/06/2016"));
+		sm22.setNotes("Semester 2 of year 2015/2016 which starts on 19/02/2016 and ends on 30/06/2016");
+		semesterDAO.save(sm22);
+		semesters.add(sm22);
 		
 		//
 		// Create 2 courses and related authorities
 		//
-		Course c1 = new Course();
-		c1.setCourseIdentifier("RC101");
-		c1.setCourseName("Regular Course Sem 1");
-		c1.setInstructor("i");
-		c1.setShortDescription("Short Desc RC101 for testing purposes.");
-		c1.setLongDescription("Long Description for RC101 - Regular Course for Semester 1 for testing purposes");
-		courseDAO.save(c1);
 		
-		Course c2 = new Course();
-		c2.setCourseIdentifier("RC201");
-		c2.setCourseName("Regular Course Sem 2");
-		c2.setInstructor("i");
-		c2.setShortDescription("Short Desc RC202 for testing purposes.");
-		c2.setLongDescription("Long Description for RC201 - Regular Course for Semester 2 for testing purposes");
-		courseDAO.save(c2);
-
-		Authority ac1 = new Authority();
-		ac1.setUsername("i");
-		ac1.setAuthority(Role.ROLE_INSTRUCTOR.toString());
-		ac1.setCourseId(c1.getId());
-		authorityDAO.save(ac1);
+		List<SemesterCourse> courses = new ArrayList<SemesterCourse>();
+		for(int insNr = 0; insNr < instructors.size(); insNr++) {
+			User user = instructors.get(insNr);
+			int rand = new Random().nextInt(2)+1;
+			
+			for(int p = 0; p < rand; p++) {
+				String courseCode = "C" + Integer.toString(insNr) + "0" + Integer.toString(p+1);
+				Course c1 = new Course();
+				c1.setCourseIdentifier(courseCode);
+				c1.setCourseName("Course by " + user.getUsername());
+				c1.setInstructor(user.getUsername());
+				c1.setShortDescription("Short Description of the course " + courseCode + ". Enrollment code: enroll");
+				c1.setLongDescription("This is the long description for " + courseCode + " - " + c1.getCourseName());
+				courseDAO.save(c1);
+				
+				Authority ac1 = new Authority();
+				ac1.setUsername(user.getUsername());
+				ac1.setAuthority(Role.ROLE_INSTRUCTOR.toString());
+				ac1.setCourseId(c1.getId());
+				authorityDAO.save(ac1);
+				
+				SemesterCourse sc1 = new SemesterCourse();
+				Semester sem = semesters.get(new Random().nextInt(semesters.size()));
+				sc1.setSemesterId(sem.getId());
+				sc1.setSemester(sem);
+				sc1.setCourseId(c1.getId());
+				sc1.setEnrollmentKey("enroll");
+				semesterCourseDAO.save(sc1);
+				
+				courses.add(sc1);
+			}
+		}
 		
-		Authority ac2 = new Authority();
-		ac2.setUsername("i");
-		ac2.setAuthority(Role.ROLE_INSTRUCTOR.toString());
-		ac2.setCourseId(c2.getId());
-		authorityDAO.save(ac2);
-		
-		//
-		// Create 2 semester courses
-		//
-		SemesterCourse sc1 = new SemesterCourse();
-		sc1.setSemesterId(sm1.getId());
-		sc1.setCourseId(c1.getId());
-		sc1.setEnrollmentKey("sc1enroll");
-		semesterCourseDAO.save(sc1);
-		
-		SemesterCourse sc2 = new SemesterCourse();
-		sc2.setSemesterId(sm2.getId());
-		sc2.setCourseId(c2.getId());
-		sc2.setEnrollmentKey("sc2enroll");
-		semesterCourseDAO.save(sc2);
-
 		//
 		// Create grading criteria
 		//
-		createGradeCriteria(sc1.getId());
-		createGradeCriteria(sc2.getId());
+		for (SemesterCourse sc : courses) {
+			createGradeCriteria(sc.getId());
+		}
 		
 		//
 		// Create 15 week course plan
 		//
-		List<Long> cpIdListSc1 = createCoursePlan(sc1.getId());
-		List<Long> cpIdListSc2 = createCoursePlan(sc2.getId());
-		
-		//
-		// Create assignments for each plan
-		//
-		createAssignments(cpIdListSc1);
-		createAssignments(cpIdListSc2);
-		
-		for (int j = 0; j < 10; j++) {
-			Long courseId = sc1.getCourseId();
-			Long semesterId = sc1.getSemesterId();
+		for (SemesterCourse sc : courses) {
+			List<Long> cpIdList = createCoursePlan(sc.getId());
 			
-			if(j > 6) {
-				courseId = sc2.getCourseId();
-				semesterId = sc2.getSemesterId();
+			createAssignments(cpIdList, sc.getSemester());
+			Collections.shuffle(students, new Random(System.nanoTime()));
+			
+			int studentCount = new Random().nextInt(7)+5;
+			List<User> subList = students.subList(0, studentCount);
+			for (User stu : subList) {
+				Authority ac = new Authority();
+				ac.setUsername(stu.getUsername());
+				ac.setAuthority(Role.ROLE_STUDENT.toString());
+				ac.setCourseId(sc.getCourseId());
+				ac.setSemesterId(sc.getSemesterId());
+				authorityDAO.save(ac);
 			}
-			
-			User student = createUser(Integer.toString(j), Integer.toString(j), Role.ROLE_STUDENT.toString(), courseId, semesterId);
-			
-			userDAO.saveUserWithAuthority(student);
 		}
 	}
 	
 	public void createGradeCriteria(long scid) {
-		String suffix = " For Semester Course " + Long.toString(scid);
+		int totalWeight = 100;
 		GradeCriteria gc1 = new GradeCriteria();
-		gc1.setName("Midterm 1" + suffix);
+		gc1.setName("Midterm 1");
 		gc1.setGradingCriteria(GradingCriteria.EXAM.getIndex());
-		gc1.setWeight(15);
+		gc1.setWeight(new Random().nextInt(10)+5);
 		gc1.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc1);
-
+		totalWeight -= gc1.getWeight();
+		
 		GradeCriteria gc2 = new GradeCriteria();
-		gc2.setName("Midterm 2" + suffix);
+		gc2.setName("Midterm 2");
 		gc2.setGradingCriteria(GradingCriteria.EXAM.getIndex());
-		gc2.setWeight(15);
+		gc2.setWeight(new Random().nextInt(10)+5);
 		gc2.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc2);
+		totalWeight -= gc2.getWeight();
 
 		GradeCriteria gc3 = new GradeCriteria();
-		gc3.setName("Final" + suffix);
+		gc3.setName("Final");
 		gc3.setGradingCriteria(GradingCriteria.EXAM.getIndex());
-		gc3.setWeight(30);
+		gc3.setWeight(new Random().nextInt(15)+15);
 		gc3.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc3);
+		totalWeight -= gc3.getWeight();
 
 		GradeCriteria gc4 = new GradeCriteria();
-		gc4.setName("Attendance" + suffix);
+		gc4.setName("Attendance");
 		gc4.setGradingCriteria(GradingCriteria.ATTENDANCE.getIndex());
-		gc4.setWeight(10);
+		gc4.setWeight(new Random().nextInt(totalWeight/3));
 		gc4.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc4);
-
+		totalWeight -= gc4.getWeight();
+		
 		GradeCriteria gc5 = new GradeCriteria();
-		gc5.setName("Assignments" + suffix);
-		gc5.setGradingCriteria(GradingCriteria.ASSIGNMENT.getIndex());
-		gc5.setWeight(30);
+		gc5.setName("Attendance");
+		gc5.setGradingCriteria(GradingCriteria.GAMIFICATION.getIndex());
+		gc5.setWeight(new Random().nextInt(totalWeight/3));
 		gc5.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc5);
+		totalWeight -= gc5.getWeight();
+		
+		GradeCriteria gc6 = new GradeCriteria();
+		gc6.setName("Participation");
+		gc6.setGradingCriteria(GradingCriteria.OTHER.getIndex());
+		gc6.setWeight(new Random().nextInt(totalWeight/2));
+		gc6.setSemesterCourseId(scid);
+		semesterCourseDAO.save(gc6);
+		totalWeight -= gc6.getWeight();
+
+		GradeCriteria gc7 = new GradeCriteria();
+		gc7.setName("Assignments");
+		gc7.setGradingCriteria(GradingCriteria.ASSIGNMENT.getIndex());
+		gc7.setWeight(totalWeight);
+		gc7.setSemesterCourseId(scid);
+		semesterCourseDAO.save(gc7);
 	}
 	
 	public List<Long> createCoursePlan(long scid) {
 		List<Long> idList = new ArrayList<Long>();
 		
-		String suffix = " For Semester Course " + Long.toString(scid);
-		CoursePlan cp1 = new CoursePlan();
-		cp1.setCoursePlanTitle("Regular Plan Section 1" + suffix);
-		cp1.setSemesterCourseId(scid);
-		cp1.setPlanOrder(1);
-		cp1.setPlanLength(3);
-		cp1.setDescription("Regular Plan Section 1 Description" + suffix);
-		coursePlanDAO.save(cp1);
-		idList.add(cp1.getId());
-		
-		CoursePlan cp2 = new CoursePlan();
-		cp2.setCoursePlanTitle("Regular Plan Section 2" + suffix);
-		cp2.setSemesterCourseId(scid);
-		cp2.setPlanOrder(2);
-		cp2.setPlanLength(2);
-		cp2.setDescription("Regular Plan Section 2 Description" + suffix);
-		coursePlanDAO.save(cp2);
-		idList.add(cp2.getId());
-
-		CoursePlan cp3 = new CoursePlan();
-		cp3.setCoursePlanTitle("Regular Plan Section 3" + suffix);
-		cp3.setSemesterCourseId(scid);
-		cp3.setPlanOrder(3);
-		cp3.setPlanLength(4);
-		cp3.setDescription("Regular Plan Section 3 Description" + suffix);
-		coursePlanDAO.save(cp3);
-		idList.add(cp3.getId());
-
-		CoursePlan cp4 = new CoursePlan();
-		cp4.setCoursePlanTitle("Regular Plan Section 4" + suffix);
-		cp4.setSemesterCourseId(scid);
-		cp4.setPlanOrder(4);
-		cp4.setPlanLength(1);
-		cp4.setDescription("Regular Plan Section 4 Description" + suffix);
-		coursePlanDAO.save(cp4);
-		idList.add(cp4.getId());
-
-		CoursePlan cp5 = new CoursePlan();
-		cp5.setCoursePlanTitle("Regular Plan Section 5" + suffix);
-		cp5.setSemesterCourseId(scid);
-		cp5.setPlanOrder(5);
-		cp5.setPlanLength(5);
-		cp5.setDescription("Regular Plan Section 5 Description" + suffix);
-		coursePlanDAO.save(cp5);
-		idList.add(cp5.getId());
+		int weekLength = new Random().nextInt(10) + 10;
+		int totalLength = 0;
+		int i = 1;
+		while(totalLength < weekLength) {
+			int currentLength = new Random().nextInt(5) + 1;
+			
+			if(currentLength + totalLength > weekLength) {
+				currentLength = weekLength - totalLength;
+			}
+			
+			CoursePlan cp1 = new CoursePlan();
+			cp1.setCoursePlanTitle("Course Plan Section " + i);
+			cp1.setSemesterCourseId(scid);
+			cp1.setPlanOrder(1);
+			cp1.setPlanLength(3);
+			cp1.setDescription("This is the details of the section " + i + " of the course plan");
+			coursePlanDAO.save(cp1);
+			idList.add(cp1.getId());
+			
+			totalLength += currentLength;
+			i++;
+		}
 		
 		return idList;
 	}
 	
-	public void createAssignments(List<Long> idList) {
-		DateTime now = DateTime.now();
-		for (int i = 0; i<idList.size(); i++) {
+	public void createAssignments(List<Long> idList, Semester sem) {
+		DateTime start = new DateTime(sem.getStartDate());
+		
+		int k = 1;
+		int asgnCount = new Random().nextInt(10) + 1;
+		int individualWeight = 100 / asgnCount;
+		
+		for (int i = 0; i < asgnCount; i++) {
 			Assignment asgn = new Assignment();
-			asgn.setPlanId(idList.get(i));
-			String suffix = " " + Integer.toString(i) + " on " + idList.get(i).toString();
-			
-			asgn.setName("Assignment" + suffix);
-			asgn.setDescription("Assignment Description, a very detailed one" + suffix);
-			asgn.setDueDate(now.toDate());
+			asgn.setPlanId(idList.get(new Random().nextInt(idList.size())));
+			asgn.setName("Assignment " + Integer.toString(k));
+			asgn.setWeight((long)individualWeight);
+			asgn.setDescription("Assignment Description, a very detailed one " + Integer.toString(k));
+			asgn.setDueDate(start.toDate());
 			assignmentDAO.save(asgn);
-			now = now.plusDays(15);
+			k++;
 		}
 	}
 	
