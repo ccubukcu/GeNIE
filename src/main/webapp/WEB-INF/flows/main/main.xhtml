@@ -9,18 +9,25 @@
 	xmlns:appcc="http://java.sun.com/jsf/composite/components"
 	template="/WEB-INF/layouts/template.xhtml">
 
-	<ui:define name="title"></ui:define>
-	
+	<ui:define name="title">#{lbl['pages.main.title']}</ui:define>
+
+	<ui:define name="pageTitle">#{lbl['pages.main.header']}</ui:define>
+
 	<ui:define name="content">
 	
 		<script type="text/javascript">
 			setCurrentPage("#home_menu_item");
 	    </script>
 	    
-		<div class="main">
-			<div class="wrap">
-				<h:outputText value="smtmst" escape="false"></h:outputText>
+		<article class="post single">
+			<div class="container">
+				<div class="row">
+					<div class="entry clearfix">
+						<h3 class="section-title">#{lbl['main.label.generalSection']}</h3>
+						<h:outputText styleClass="regular-body-text" value="#{lbl['main.label.body']}" escape="false"></h:outputText>
+					</div>
+				</div>
 			</div>
-		</div>
+		</article>
 	</ui:define>
 </ui:composition>

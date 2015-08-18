@@ -52,7 +52,7 @@
 										<h:panelGrid style="width: 100%;">
 											<p:selectOneButton value="#{gamificationSettingsBean.generalSettings.gamificationEnabled}" id="gamificationEnabled" 
 												required="true" requiredMessage="#{msg['error.select_value']}">
-												<p:ajax update="badgesEnabled leaderboardsEnabled achievementsEnabled pointsName"/>
+												<p:ajax update="badgesEnabled leaderboardsEnabled achievementsEnabled pointsName maxPoints"/>
 												<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
 												<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
 											</p:selectOneButton>
@@ -100,17 +100,20 @@
 											<p:message for="pointsName" />
 										</h:panelGrid>
 										
-										<h:outputText value="#{lbl['gamificationSettings.label.maximumPoints']}" styleClass="title-text" />
-										<h:panelGrid style="width: 100%;" columns="2">
+										<h:panelGroup>
+											<h:outputText value="#{lbl['gamificationSettings.label.maximumPoints']}" styleClass="title-text" />
+											<h:panelGroup id="pointsInfo" style="padding-right: 16px;">
+												<i class="fa fa-info-circle fa-lg" style="line-height: 0;"></i>
+											</h:panelGroup>
+										<p:tooltip for="pointsInfo" value="#{lbl['gamificationSettings.label.maximumPointsInfo']}" />
+										</h:panelGroup>
+										
+										<h:panelGrid style="width: 100%;">
 											<p:inputText id="maxPoints" required="true" style="width: 42%;"
 												disabled="#{!gamificationSettingsBean.generalSettings.gamificationEnabled}"
 												requiredMessage="#{msg['error.enter_value']}" value="#{gamificationSettingsBean.generalSettings.maxConvertablePoints}"/>
-											<h:panelGroup id="pointsInfo">
-												<i class="fa fa-info-circle fa-lg" style="line-height: 0;"></i>
-											</h:panelGroup>
 											
 											<p:message for="maxPoints" />
-											<p:tooltip for="pointsInfo" value="#{lbl['gamificationSettings.label.maximumPointsInfo']}" />
 										</h:panelGrid>
 									</h:panelGrid>
 					            </h:form>

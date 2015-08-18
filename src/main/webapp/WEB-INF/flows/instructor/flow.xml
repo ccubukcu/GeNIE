@@ -5,7 +5,7 @@
         http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
     parent="parent-flow">
 
-	<view-state id="admin" view="externalRedirect:/instructor/main">
+	<view-state id="admin" view="externalRedirect:/main">
 	</view-state>
 	
 </flow>

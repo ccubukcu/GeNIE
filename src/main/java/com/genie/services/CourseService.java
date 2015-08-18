@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.genie.enums.GradingCriteria;
 import com.genie.model.Course;
+import com.genie.model.GamificationSettings;
 import com.genie.model.GradeCriteria;
 import com.genie.model.SemesterCourse;
 import com.genie.model.StudentAttendance;
@@ -91,7 +92,12 @@ public class CourseService {
 		List<StudentGradeRowWrapper> gradedStudents = new ArrayList<StudentGradeRowWrapper>();
 		
 		int weekCount = CoursePlanService.getWeekCountInCourseSemester(semesterCourseId);
-		int maxPoints = GamificationService.getGeneralSettingsForSemesterCourse(semesterCourseId).getMaxConvertablePoints();
+		GamificationSettings generalSettings = GamificationService.getGeneralSettingsForSemesterCourse(semesterCourseId);
+		
+		int maxPoints = 0;
+		if(generalSettings != null) {
+			maxPoints = generalSettings.getMaxConvertablePoints();
+		}
 		
 		if(students != null) {
 			for (User stu : students) {
@@ -205,6 +211,9 @@ public class CourseService {
 		
 		if(studentPoints > maxPoints)
 			return 1.0f;
+		
+		if(maxPoints == 0)
+			maxPoints = 1;
 		
 		return studentPoints / maxPoints;
 	}

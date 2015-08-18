@@ -2045,7 +2045,6 @@ h6.head-title {
 }
 /* 13 - Inner page header */
 .inner-head {
-	background-image: url(assets/img/content/inner-bg.jpg);
 	background-repeat: no-repeat;
 	background-position: center center;
 	-webkit-background-size: cover;

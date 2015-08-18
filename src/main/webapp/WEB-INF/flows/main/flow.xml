@@ -6,5 +6,4 @@
     parent="parent-flow">
     
 	<view-state id="main" />
-	
 </flow>
