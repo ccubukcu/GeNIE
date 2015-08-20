@@ -16,22 +16,34 @@ import com.genie.dao.AssignmentDAO;
 import com.genie.dao.AuthorityDAO;
 import com.genie.dao.CourseDAO;
 import com.genie.dao.CoursePlanDAO;
+import com.genie.dao.GamificationDAO;
 import com.genie.dao.SchoolYearDAO;
 import com.genie.dao.SemesterCourseDAO;
 import com.genie.dao.SemesterDAO;
 import com.genie.dao.UserDAO;
+import com.genie.enums.AchievementType;
+import com.genie.enums.ComparisonType;
 import com.genie.enums.GradingCriteria;
+import com.genie.enums.LeaderboardVisibility;
+import com.genie.enums.SampleImageFolder;
+import com.genie.model.Achievement;
 import com.genie.model.Assignment;
 import com.genie.model.Authority;
+import com.genie.model.Badge;
 import com.genie.model.Course;
 import com.genie.model.CoursePlan;
+import com.genie.model.GamificationSettings;
 import com.genie.model.GradeCriteria;
+import com.genie.model.LeaderboardSettings;
 import com.genie.model.SchoolYear;
 import com.genie.model.Semester;
 import com.genie.model.SemesterCourse;
+import com.genie.model.StudentGamificationSettings;
+import com.genie.model.StudentPoint;
 import com.genie.model.User;
 import com.genie.security.Role;
 import com.genie.utils.DataFormatter;
+import com.genie.utils.ResourceUtil;
 
 /**
  * @author ccubukcu
@@ -55,6 +67,8 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 	private CoursePlanDAO coursePlanDAO;
 	@Autowired
 	private AssignmentDAO assignmentDAO;
+	@Autowired
+	private GamificationDAO gamificationDAO;
 	
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent arg0) {
@@ -191,8 +205,12 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 				sc1.setSemesterId(sem.getId());
 				sc1.setSemester(sem);
 				sc1.setCourseId(c1.getId());
+				sc1.setCourse(c1);
 				sc1.setEnrollmentKey("enroll");
 				semesterCourseDAO.save(sc1);
+
+				createGeneralGamificationSettings(sc1.getId());
+				createLeaderboardSettings(sc1.getId());
 				
 				courses.add(sc1);
 			}
@@ -202,7 +220,7 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 		// Create grading criteria
 		//
 		for (SemesterCourse sc : courses) {
-			createGradeCriteria(sc.getId());
+			sc.setGradeCriteria(createGradeCriteria(sc.getId()));
 		}
 		
 		//
@@ -211,7 +229,7 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 		for (SemesterCourse sc : courses) {
 			List<Long> cpIdList = createCoursePlan(sc.getId());
 			
-			createAssignments(cpIdList, sc.getSemester());
+			List<Assignment> asgn = createAssignments(cpIdList, sc.getSemester());
 			Collections.shuffle(students, new Random(System.nanoTime()));
 			
 			int studentCount = new Random().nextInt(7)+5;
@@ -223,58 +241,196 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 				ac.setCourseId(sc.getCourseId());
 				ac.setSemesterId(sc.getSemesterId());
 				authorityDAO.save(ac);
+				
+				createStudentGamificationSettings(sc.getId(), stu.getUsername());
+			}
+			createStudentPoints(subList, sc);
+			
+			List<Badge> badges = createBadges(sc);
+			
+			createAchievements(sc, badges, asgn);
+		}
+	}
+	
+	public void createAchievements(SemesterCourse sc, List<Badge> badges, List<Assignment> assignments) {
+		Random random = new Random();
+		int nr = random.nextInt(25);
+		
+		for(int i=0; i<nr; i++) {
+			Achievement ach = new Achievement();
+			ach.setName("Achievement " + i);
+			ach.setDescription(("This achievement is created automatically for testing purposes which is a achievement for " + sc.getCourse().getCourseIdentifier() + " on " + sc.getSemester().getSemesterIdentifier()));
+			SampleImageFolder sif = SampleImageFolder.randomFolder();
+			ach.setUsingUploadedImage(false);
+			ach.setResourceImageFolder(sif.getIndex());
+			ach.setResourceImageName(ResourceUtil.getRandomImageFromFolder(sif.getResourceFolderPath()));
+			ach.setSemesterCourseId(sc.getId());
+			
+			GradeCriteria targetGC = sc.getGradeCriteria().get(random.nextInt(sc.getGradeCriteria().size()));
+			ach.setTargetGradeCriteriaId(targetGC.getId());
+			ach.setAchievementType(AchievementType.getRandomType().getIndex());
+			ach.setThresholdValue(random.nextInt(100)+1);
+			ach.setTargetCount(random.nextInt(5)+1);
+			ach.setComparisonType(ComparisonType.getRandomType().getIndex());
+			
+			if(random.nextBoolean()) {
+				ach.setPointReward(random.nextInt(500)+250L);
+			}
+			
+			if(random.nextBoolean() && badges.size() > 0) {
+				Badge randomBadge = badges.get(random.nextInt(badges.size()));
+				ach.setBadgeRewardId(randomBadge.getId());
+			}
+			
+			if(random.nextBoolean()) {
+				GradeCriteria gc = sc.getGradeCriteria().get(random.nextInt(sc.getGradeCriteria().size()));
+				int grade = random.nextInt(100)+1;
+				ach.setGradeReward(grade);
+				
+				if(gc.getGradingCriteria() == GradingCriteria.ASSIGNMENT.getIndex()) {
+					Assignment asgn = assignments.get(random.nextInt(assignments.size()));
+					ach.setRewardAssignmentId(asgn.getId());
+				} else if (gc.getGradingCriteria() == GradingCriteria.ATTENDANCE.getIndex()) {
+					ach.setWeekReward(random.nextInt(15));
+				} else {
+					GradeCriteria rewardGC = sc.getGradeCriteria().get(random.nextInt(sc.getGradeCriteria().size()));
+					ach.setRewardGradeCriteria(rewardGC);
+				}
+			}
+			
+			gamificationDAO.save(ach);
+		}
+	}
+	
+	public List<Badge> createBadges(SemesterCourse sc) {
+		int nr = new Random().nextInt(25);
+		List<Badge> badges = new ArrayList<Badge>();
+		
+		for(int i=0; i<nr; i++) {
+			Badge badge = new Badge();
+			badge.setName("Badge " + i);
+			badge.setSemesterCourseId(sc.getId());
+			SampleImageFolder sif = SampleImageFolder.randomFolder();
+			badge.setUsingUploadedImage(false);
+			badge.setResourceImageFolder(sif.getIndex());
+			badge.setResourceImageName(ResourceUtil.getRandomImageFromFolder(sif.getResourceFolderPath()));
+			badge.setDescription(("This badge is created automatically for testing purposes which is a badge for " + sc.getCourse().getCourseIdentifier() + " on " + sc.getSemester().getSemesterIdentifier()));
+			gamificationDAO.save(badge);
+			badges.add(badge);
+		}
+		
+		return badges;
+	}
+	
+	public void createStudentPoints(List<User> students, SemesterCourse sc) {
+		Random random = new Random();
+		for (User stu : students) {
+			int count = random.nextInt(10);
+			
+			for(int i = 0; i < count; i++) {
+				int points = random.nextInt(1500)+200;
+				
+				StudentPoint sp = new StudentPoint();
+				sp.setSemesterCourseId(sc.getId());
+				sp.setPoints((long)points);
+				sp.setUsername(stu.getUsername());
+				gamificationDAO.save(sp);
 			}
 		}
 	}
 	
-	public void createGradeCriteria(long scid) {
+	public void createGeneralGamificationSettings(long scid) {
+		Random random = new Random();
+		GamificationSettings gs = new GamificationSettings();
+		gs.setGamificationEnabled(true);
+		gs.setLeaderboardsEnabled(true);
+		gs.setBadgesEnabled(true);
+		gs.setAchievementsEnabled(true);
+		gs.setMaxConvertablePoints(random.nextInt(10000));
+		gs.setPointsName("Points");
+		gs.setSemesterCourseId(scid);
+		courseDAO.save(gs);
+	}
+	
+	public void createLeaderboardSettings(long scid) {
+		LeaderboardSettings ls = new LeaderboardSettings();
+		Random random = new Random();
+		
+		ls.setAnonymous(random.nextBoolean());
+		ls.setTopStudents(random.nextInt(5)+1);
+		ls.setBottomStudents(random.nextInt(5)+1);
+		ls.setVisibility(LeaderboardVisibility.getRandomVisibility().getIndex());
+		gamificationDAO.save(ls);
+	}
+	
+	public void createStudentGamificationSettings(long scid, String username) {
+		StudentGamificationSettings gs = new StudentGamificationSettings();
+		gs.setGamificationEnabled(true);
+		gs.setLeaderboardsEnabled(true);
+		gs.setBadgesEnabled(true);
+		gs.setAchievementsEnabled(true);
+		gs.setSemesterCourseId(scid);
+		gs.setStudentName(username);
+		courseDAO.save(gs);
+	}
+	
+	public List<GradeCriteria> createGradeCriteria(long scid) {
+		Random random = new Random();
+		List<GradeCriteria> list = new ArrayList<GradeCriteria>();
+		
 		int totalWeight = 100;
 		GradeCriteria gc1 = new GradeCriteria();
 		gc1.setName("Midterm 1");
 		gc1.setGradingCriteria(GradingCriteria.EXAM.getIndex());
-		gc1.setWeight(new Random().nextInt(10)+5);
+		gc1.setWeight(random.nextInt(10)+5);
 		gc1.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc1);
+		list.add(gc1);
 		totalWeight -= gc1.getWeight();
 		
 		GradeCriteria gc2 = new GradeCriteria();
 		gc2.setName("Midterm 2");
 		gc2.setGradingCriteria(GradingCriteria.EXAM.getIndex());
-		gc2.setWeight(new Random().nextInt(10)+5);
+		gc2.setWeight(random.nextInt(10)+5);
 		gc2.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc2);
+		list.add(gc2);
 		totalWeight -= gc2.getWeight();
 
 		GradeCriteria gc3 = new GradeCriteria();
 		gc3.setName("Final");
 		gc3.setGradingCriteria(GradingCriteria.EXAM.getIndex());
-		gc3.setWeight(new Random().nextInt(15)+15);
+		gc3.setWeight(random.nextInt(15)+15);
 		gc3.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc3);
+		list.add(gc3);
 		totalWeight -= gc3.getWeight();
 
 		GradeCriteria gc4 = new GradeCriteria();
 		gc4.setName("Attendance");
 		gc4.setGradingCriteria(GradingCriteria.ATTENDANCE.getIndex());
-		gc4.setWeight(new Random().nextInt(totalWeight/3));
+		gc4.setWeight(random.nextInt(totalWeight/3));
 		gc4.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc4);
+		list.add(gc4);
 		totalWeight -= gc4.getWeight();
 		
 		GradeCriteria gc5 = new GradeCriteria();
 		gc5.setName("Attendance");
 		gc5.setGradingCriteria(GradingCriteria.GAMIFICATION.getIndex());
-		gc5.setWeight(new Random().nextInt(totalWeight/3));
+		gc5.setWeight(random.nextInt(totalWeight/3));
 		gc5.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc5);
+		list.add(gc5);
 		totalWeight -= gc5.getWeight();
 		
 		GradeCriteria gc6 = new GradeCriteria();
 		gc6.setName("Participation");
 		gc6.setGradingCriteria(GradingCriteria.OTHER.getIndex());
-		gc6.setWeight(new Random().nextInt(totalWeight/2));
+		gc6.setWeight(random.nextInt(totalWeight/2));
 		gc6.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc6);
+		list.add(gc6);
 		totalWeight -= gc6.getWeight();
 
 		GradeCriteria gc7 = new GradeCriteria();
@@ -283,16 +439,20 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 		gc7.setWeight(totalWeight);
 		gc7.setSemesterCourseId(scid);
 		semesterCourseDAO.save(gc7);
+		list.add(gc7);
+		
+		return list;
 	}
 	
 	public List<Long> createCoursePlan(long scid) {
 		List<Long> idList = new ArrayList<Long>();
+		Random random = new Random();
 		
-		int weekLength = new Random().nextInt(10) + 10;
+		int weekLength = random.nextInt(10) + 10;
 		int totalLength = 0;
 		int i = 1;
 		while(totalLength < weekLength) {
-			int currentLength = new Random().nextInt(5) + 1;
+			int currentLength = random.nextInt(5) + 1;
 			
 			if(currentLength + totalLength > weekLength) {
 				currentLength = weekLength - totalLength;
@@ -314,8 +474,9 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 		return idList;
 	}
 	
-	public void createAssignments(List<Long> idList, Semester sem) {
+	public List<Assignment> createAssignments(List<Long> idList, Semester sem) {
 		DateTime start = new DateTime(sem.getStartDate());
+		List<Assignment> assignments = new ArrayList<Assignment>();
 		
 		int k = 1;
 		int asgnCount = new Random().nextInt(10) + 1;
@@ -329,8 +490,11 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 			asgn.setDescription("Assignment Description, a very detailed one " + Integer.toString(k));
 			asgn.setDueDate(start.toDate());
 			assignmentDAO.save(asgn);
+			assignments.add(asgn);
 			k++;
 		}
+		
+		return assignments;
 	}
 	
 	public Date stringToDate(String date) {

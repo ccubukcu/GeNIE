@@ -406,6 +406,7 @@ public class GamificationSettingsBean extends BaseBean {
 		selectedRewardGradeCriteria = null;
 		
 		updatingAchievement = false;
+		achievementTypeSelected = false;
 
 		if(selectedCourse != null) {
 			refreshAchievementGradeCriteria();

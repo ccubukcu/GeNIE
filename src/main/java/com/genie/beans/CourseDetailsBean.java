@@ -95,6 +95,10 @@ public class CourseDetailsBean extends BaseBean {
 			settings = new StudentGamificationSettings();
 		}
 		
+		if(generalSettings == null) {
+			generalSettings = new GamificationSettings();
+		}
+		
 		if(generalSettings.isAchievementsEnabled() && settings.isAchievementsEnabled()) {
 			refreshAchievements();
 		}
@@ -319,6 +323,18 @@ public class CourseDetailsBean extends BaseBean {
 				GamificationService.saveUserSettings(settings);
 				saveSuccessful();
 			}
+			
+			if(generalSettings.isAchievementsEnabled() && settings.isAchievementsEnabled()) {
+				refreshAchievements();
+			}
+			
+			if(generalSettings.isBadgesEnabled() && settings.isBadgesEnabled()) {
+				refreshBadges();
+			}
+			
+			if(generalSettings.isLeaderboardsEnabled() && settings.isLeaderboardsEnabled()) {
+				refreshLeaderboards();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			saveOrUpdateFailed();
@@ -341,6 +357,8 @@ public class CourseDetailsBean extends BaseBean {
 		if(ach.getRewardGradeCriteria() == null || ach.getGradeReward() == null)
 			return ResourceUtil.getLabel("gamificationSettings.label.noGradeReward");
 		else {
+			if(ach.getRewardAssignment() != null) 
+				return ach.getRewardAssignment().getName() + ": " + ach.getGradeReward();
 			return ach.getRewardGradeCriteria().getName() + ": " + ach.getGradeReward(); 
 		}
 	}

@@ -419,21 +419,34 @@ public class GamificationService {
 		
 		Collections.sort(leaderboardData);
 		
+		if(leaderboardSettings == null)
+			leaderboardSettings = new LeaderboardSettings();
+		
 		String anonymous = null;
 		if(leaderboardSettings.isAnonymous())
 			anonymous = ResourceUtil.getLabel("gamificationSettings.label.anonymous");
 		
 		int i=1;
+		boolean studentFound = false;
 		for (LeaderboardWrapper lw : leaderboardData) {
 			lw.setStanding(i);
 			
 			if(lw.getUsername().equals(SessionService.getUsername())) {
 				objects.add(0, lw);
+				studentFound = true;
 			} else if (anonymous != null) {
 				lw.setUsername(anonymous);
 			}
 			
 			i++;
+		}
+		
+		if(!studentFound) {
+			LeaderboardWrapper lw = new LeaderboardWrapper();
+			lw.setUsername(SessionService.getUsername());
+			lw.setPoint(0L);
+			lw.setStanding(0);
+			objects.add(0, lw);
 		}
 		
 		List<LeaderboardWrapper> filteredData = new ArrayList<LeaderboardWrapper>();

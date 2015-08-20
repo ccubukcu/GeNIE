@@ -1,7 +1,9 @@
 package com.genie.enums;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.faces.model.SelectItem;
 
@@ -15,6 +17,9 @@ public enum AchievementType {
 	SUBMISSION_EARLY(40);
 	
 	private int index;
+	
+	private static final List<AchievementType> valueList = Arrays.asList(values());
+	private static final int size = valueList.size();
 	
 	private AchievementType(int index) {
 		this.index = index;
@@ -48,4 +53,8 @@ public enum AchievementType {
     	}
     	return null;
     }
+
+	public static AchievementType getRandomType() {
+		return valueList.get(new Random().nextInt(size));
+	}
 }

@@ -45,7 +45,7 @@ public class SchoolYear extends BaseEntity implements LoggableEntity {
 	@Column(name = "notes", length = 1250)
 	private String notes;
 	
-	@OneToMany(mappedBy = "schoolYear", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "schoolYear", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Where(clause="active=1")
 	private List<Semester> semesters;
 	

@@ -1,7 +1,9 @@
 package com.genie.enums;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.faces.model.SelectItem;
 
@@ -18,6 +20,9 @@ public enum ComparisonType {
 	GREATER(40);
 	
 	private int index;
+
+	private static final List<ComparisonType> valueList = Arrays.asList(values());
+	private static final int size = valueList.size();
 	
 	private ComparisonType(int index) {
 		this.index = index;
@@ -93,5 +98,9 @@ public enum ComparisonType {
 
 	public static String getTextLabel(int ct) {
         return ResourceUtil.getLabel("comparisonType.label." + getComparisonType(ct).toString());
+	}
+
+	public static ComparisonType getRandomType() {
+		return valueList.get(new Random().nextInt(size));
 	}
 }

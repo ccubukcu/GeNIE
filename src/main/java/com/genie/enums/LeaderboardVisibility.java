@@ -1,7 +1,9 @@
 package com.genie.enums;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.faces.model.SelectItem;
 
@@ -13,6 +15,9 @@ public enum LeaderboardVisibility {
 	TOP(2);
 	
 	private int index;
+	
+	private static final List<LeaderboardVisibility> valueList = Arrays.asList(values());
+	private static final int size = valueList.size();
 	
 	private LeaderboardVisibility(int index) {
 		this.index = index;
@@ -46,4 +51,8 @@ public enum LeaderboardVisibility {
     	}
     	return null;
     }
+
+	public static LeaderboardVisibility getRandomVisibility() {
+		return valueList.get(new Random().nextInt(size));
+	}
 }

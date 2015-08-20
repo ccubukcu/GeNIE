@@ -1,7 +1,9 @@
 package com.genie.enums;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.faces.model.SelectItem;
 
@@ -22,6 +24,9 @@ public enum SampleImageFolder {
 	
 	private int index;
 	private String resourceFolderPath;
+	
+	private static final List<SampleImageFolder> valueList = Arrays.asList(values());
+	private static final int size = valueList.size();
 	
 	private SampleImageFolder(int index, String path) {
 		this.index = index;
@@ -69,4 +74,8 @@ public enum SampleImageFolder {
     	}
     	return null;
     }
+    
+    public static SampleImageFolder randomFolder()  {
+        return valueList.get(new Random().nextInt(size));
+      }
 }

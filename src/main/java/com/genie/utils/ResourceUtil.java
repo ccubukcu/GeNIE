@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 import org.springframework.core.io.ClassPathResource;
@@ -112,5 +113,16 @@ public class ResourceUtil {
 	    	e.printStackTrace();
 	    }
 		return null;
+	}
+	
+	public static String getRandomImageFromFolder(String folderPath) {
+		File folder = getFileFromResources(folderPath);
+		
+		if(folder.isDirectory() && folder.listFiles() != null) {
+			File[] files = folder.listFiles();
+			
+			return files[new Random().nextInt(files.length)].getName();
+		}
+		return "";
 	}
 }

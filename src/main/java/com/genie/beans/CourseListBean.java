@@ -80,7 +80,9 @@ public class CourseListBean extends BaseBean {
 			
 			if(userAuth != null) {
 				for (Authority authority : userAuth) {
-					if(authority.getSemesterId().equals(sc.getSemesterId())
+					if(authority.getSemesterId() != null && sc.getSemesterId() != null 
+							&& authority.getCourseId() != null && sc.getCourseId() != null
+							&& authority.getSemesterId().equals(sc.getSemesterId())
 							&& authority.getCourseId().equals(sc.getCourseId())) {
 						return true;
 					}
