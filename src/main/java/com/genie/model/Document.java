@@ -19,6 +19,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.envers.Audited;
 
 import com.genie.utils.DataFormatter;
+import com.genie.utils.LoggableEntity;
 import com.genie.utils.ResourceUtil;
 
 /**

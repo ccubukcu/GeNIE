@@ -38,7 +38,6 @@
 		p:driverClassName="${jdbc.driver}" p:url="${jdbc.url}"
 		p:username="${jdbc.user}" p:password="${jdbc.password}" />
 		
-	<context:property-placeholder location="classpath*:database.properties,classpath*:hibernate.properties" />
 <!-- 	<import resource="classpath*:spring/persistence-config-files/${persistence.datasource.config.file}" />	 -->
 				
 <!--     <bean id="jpaAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"> -->
@@ -60,7 +59,7 @@
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
 		</property>
 		
-		<property name="persistenceXmlLocation" value="classpath:META-INF/fn-persistence.xml" />
+		<property name="persistenceXmlLocation" value="classpath:META-INF/genie-persistence.xml" />
 		
 		<property name="persistenceProvider">
             <bean class="com.genie.persistence.ConfigurableHibernatePersistence">
@@ -84,8 +83,7 @@
 				<prop key="org.hibernate.envers.audit_table_prefix">LOG_</prop>
 				<prop key="org.hibernate.envers.audit_table_suffix"></prop>
 				<prop key="org.hibernate.envers.store_data_at_delete">true</prop>
-				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
-<!-- 				<prop key="hibernate.ejb.interceptor">com.genie.persistence.GenieInterceptor</prop> -->
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
 			</props>
 		</property>	
 		

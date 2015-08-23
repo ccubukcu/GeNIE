@@ -107,7 +107,6 @@
 		<version.apache.poi>3.9</version.apache.poi>
 		<version.apache.commons.io>2.1</version.apache.commons.io>
 		<version.apache.commons.dbcp>1.4</version.apache.commons.dbcp>
-		<version.apache.commons.lang>2.6</version.apache.commons.lang>
 		<version.apache.commons.file-upload>1.2.2</version.apache.commons.file-upload>
 		<version.apache.commons.logging>1.2</version.apache.commons.logging>
 		
@@ -217,11 +216,6 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${version.apache.commons.io}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>${version.apache.commons.lang}</version>
 		</dependency>
 		<dependency>  
 	      <groupId>commons-logging</groupId>  

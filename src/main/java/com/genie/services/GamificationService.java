@@ -291,7 +291,7 @@ public class GamificationService {
 	}
 	
 	public static void achievementCompleted(String username, Achievement ach) {
-		if(ach.getPointReward() > 0) {
+		if(ach.getPointReward() != null && ach.getPointReward() > 0) {
 			StudentPoint sp = new StudentPoint();
 			sp.setSemesterCourseId(ach.getSemesterCourseId());
 			sp.setPoints(ach.getPointReward());

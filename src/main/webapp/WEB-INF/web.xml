@@ -8,9 +8,35 @@
     <param-name>primefaces.THEME</param-name>
     <param-value>none</param-value>
   </context-param>
+  <context-param>
+    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+    <param-value>.xhtml</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.PROJECT_STAGE</param-name>
+    <param-value>Development</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
+    <param-value>1</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
+    <param-value>/WEB-INF/taglib/springsecurity.taglib.xml</param-value>
+  </context-param>
+  <context-param>
+    <param-name>com.sun.faces.expressionFactory</param-name>
+    <param-value>com.sun.el.ExpressionFactoryImpl</param-value>
+  </context-param>
+  
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
+  
   <filter>
     <filter-name>encodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -43,22 +69,7 @@
     <filter-name>springSecurityFilterChain</filter-name>
     <servlet-name>springMVCServlet</servlet-name>
   </filter-mapping>
-  <context-param>
-    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
-    <param-value>.xhtml</param-value>
-  </context-param>
-  <context-param>
-    <param-name>javax.faces.PROJECT_STAGE</param-name>
-    <param-value>Development</param-value>
-  </context-param>
-  <context-param>
-    <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
-    <param-value>1</param-value>
-  </context-param>
+  
   <servlet>
     <servlet-name>facesServlet</servlet-name>
     <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -88,14 +99,7 @@
     <servlet-name>springMVCServlet</servlet-name>
     <url-pattern>/app/*</url-pattern>
   </servlet-mapping>
-  <context-param>
-    <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
-    <param-value>/WEB-INF/taglib/springsecurity.taglib.xml</param-value>
-  </context-param>
-  <context-param>
-    <param-name>com.sun.faces.expressionFactory</param-name>
-    <param-value>com.sun.el.ExpressionFactoryImpl</param-value>
-  </context-param>
+  
   <mime-mapping>
     <extension>css</extension>
     <mime-type>text/css</mime-type>
@@ -140,9 +144,11 @@
     <extension>xml</extension>
     <mime-type>text/xml</mime-type>
   </mime-mapping>
+  
   <session-config>
     <session-timeout>20</session-timeout>
   </session-config>
+  
   <error-page>
     <error-code>500</error-code>
     <location>/app/e500</location>
@@ -151,6 +157,7 @@
     <error-code>403</error-code>
     <location>/app/e403</location>
   </error-page>
+  
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>

@@ -72,9 +72,6 @@ public class DataFormatter {
 		return true;
 	}
 	
-	/**
-	 * Verilan HH:mm şeklindeki String Date objesine döndürür
-	 * */
 	public static Date stringToTime(String dateStr) {
 		Date retDate = null;
 		if (dateStr == null || dateStr.trim().equals("")) {
@@ -93,9 +90,6 @@ public class DataFormatter {
 		return retDate;
 	}
 	
-	/**
-	 * Verilan HH:mm şeklindeki String Date objesine döndürür
-	 * */
 	public static Date stringToDate(String dateStr) {
 		Date retDate = null;
 		if (dateStr == null || dateStr.trim().equals("")) {
@@ -124,90 +118,52 @@ public class DataFormatter {
 		return retStr;
 	}
 	
-	/**
-	 * Verilan date objesini HH:mm şeklinde formatlayıp String olarak döndürür
-	 * */
 	public static String formatShiftTime(Date date) {
 		return defaultTimeFormat.format(date);
 	}
-	/**
-	 * Verilan date objesini dd.MM.yyyy şeklinde formatlayıp String olarak döndürür
-	 * */
+
 	public static String formatDate(Date date) {
 		return defaultDateFormat.format(date);
 	}
 	
-	/**
-	 * Verilan date objesini dd/MM şeklinde formatlayıp String olarak döndürür
-	 * */
 	public static String formatDateForChart(Date date) {
 		return defaultChartFormat.format(date);
 	}
 	
-	/**
-	 * Verilan date objesini dd.MM.yyyy şeklinde formatlayıp String olarak döndürür
-	 * */
 	public static String formatDateForFilename(Date date) {
 		return defaultFileFormat.format(date);
 	}
 	
-	/**
-	 * Verilen date objesini ddMMyyyy şeklinde formatlayıp String olarak döndürür
-	 * */
 	public static String formatFileDate(Date date) {
 		return fileDateFormat.format(date);
 	}
 	
-	/**
-	 * Verilen date objesini ddMMyy şeklinde formatlayıp String olarak döndürür
-	 * */
 	public static String formatFormDate(Date date) {
 		return formDateFormat.format(date);
 	}
 
-	/**
-	 * Verilan date objesini loglarda kullanilmak uzere dd/MM/yyyy HH:mm şeklinde formatlayıp String olarak döndürür
-	 * */
 	public static String formatDateTime(Date date) {
 		String test = defaultDateTimeFormat.format(date);
 		return test;
 	}
-	/**
-	 * Verilan date objesini loglarda kullanilmak uzere dd/MM/yyyy HH:mm:ss şeklinde formatlayıp String olarak döndürür
-	 * */
+
 	public static String formatDateToSecond(Date date) {
 		String test = defaultDateToSecondFormat.format(date);
 		return test;
 	}
 	
-	/**
-	 * @param date formatlanacak date objesi
-	 * @param pattern format için kullanılacak format
-	 * */
 	public static String formatDate(Date date, String pattern) {
 		return new SimpleDateFormat(pattern).format(date);
 	}
 	
-	/**
-	 * Verilen değeri 00 % olarak formatlayıp döndürür
-	 * Örn: verilen değer 0.19 ise bunu 19 % olarak döndürür
-	 * */
 	public static String formatPercent(double value) {
 		return defaultPercentageFormat.format(value);
 	}
 	
-	/**
-	 * @param date formatlanacak date objesi
-	 * @param pattern format için kullanılacak format
-	 * */
 	public static String formatPercent(double value, String pattern) {
 		return new DecimalFormat("pattern").format(value);
 	}
 	
-	/**
-	 * Verilen değeri 00 % olarak formatlayıp yukarı yuvarlayıp döndürür
-	 * Örn: verilen değer 0.192 ise bunu 20 % olarak döndürür
-	 * */
 	public static String formatPercentRoundUp(double value) {
 		return defaultPercentageFormat.format((double)Math.round(value * 100)/100);
 	}

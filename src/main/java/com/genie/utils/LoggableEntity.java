@@ -1,4 +1,4 @@
-package com.genie.model;
+package com.genie.utils;
 
 /**
  *

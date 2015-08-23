@@ -15,7 +15,6 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.WorkbookUtil;
 
-import com.genie.model.Exportable;
 import com.genie.pojo.ExcelColumn;
 import com.genie.pojo.ExcelData;
 

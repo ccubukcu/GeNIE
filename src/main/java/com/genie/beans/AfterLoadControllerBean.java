@@ -124,19 +124,19 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 		yr1.setNotes("This is the year of 2014/2015 which starts on 18/09/2014 and ends on 21/08/2015");
 		yearDAO.save(yr1);
 		
-		SchoolYear yr = new SchoolYear();
-		yr.setYearIdentifier("Year of 2015/2016");
-		yr.setStartDate(stringToDate("14/10/2015"));
-		yr.setEndDate(stringToDate("24/09/2016"));
-		yr1.setNotes("This is the year of 2015/2016 which starts on 14/10/2015 and ends on 24/09/2016");
-		yearDAO.save(yr);
+		SchoolYear yr2 = new SchoolYear();
+		yr2.setYearIdentifier("Year of 2015/2016");
+		yr2.setStartDate(stringToDate("14/10/2015"));
+		yr2.setEndDate(stringToDate("24/09/2016"));
+		yr2.setNotes("This is the year of 2015/2016 which starts on 14/10/2015 and ends on 24/09/2016");
+		yearDAO.save(yr2);
 		
 		//
 		// Create 4 semesters
 		//
 		List<Semester> semesters = new ArrayList<Semester>();
 		Semester sm1 = new Semester();
-		sm1.setSchoolYearId(yr.getId());
+		sm1.setSchoolYearId(yr1.getId());
 		sm1.setSemesterIdentifier("Semester 1 of 14/15");
 		sm1.setSemesterOrder(1);
 		sm1.setStartDate(stringToDate("18/09/2014"));
@@ -146,7 +146,7 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 		semesters.add(sm1);
 		
 		Semester sm2 = new Semester();
-		sm2.setSchoolYearId(yr.getId());
+		sm2.setSchoolYearId(yr1.getId());
 		sm2.setSemesterIdentifier("Semester 2 of 14/15");
 		sm2.setSemesterOrder(2);
 		sm2.setStartDate(stringToDate("12/01/2015"));
@@ -156,7 +156,7 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 		semesters.add(sm2);
 		
 		Semester sm21 = new Semester();
-		sm21.setSchoolYearId(yr1.getId());
+		sm21.setSchoolYearId(yr2.getId());
 		sm21.setSemesterIdentifier("Semester 1 of 15/16");
 		sm21.setSemesterOrder(1);
 		sm21.setStartDate(stringToDate("14/10/2015"));
@@ -166,7 +166,7 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 		semesters.add(sm21);
 		
 		Semester sm22 = new Semester();
-		sm22.setSchoolYearId(yr1.getId());
+		sm22.setSchoolYearId(yr2.getId());
 		sm22.setSemesterIdentifier("Semester 2 of 15/16");
 		sm22.setSemesterOrder(2);
 		sm22.setStartDate(stringToDate("19/02/2016"));
@@ -294,7 +294,7 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 					ach.setWeekReward(random.nextInt(15));
 				} else {
 					GradeCriteria rewardGC = sc.getGradeCriteria().get(random.nextInt(sc.getGradeCriteria().size()));
-					ach.setRewardGradeCriteria(rewardGC);
+					ach.setRewardGradeCriteriaId(rewardGC.getId());
 				}
 			}
 			
@@ -461,8 +461,8 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 			CoursePlan cp1 = new CoursePlan();
 			cp1.setCoursePlanTitle("Course Plan Section " + i);
 			cp1.setSemesterCourseId(scid);
-			cp1.setPlanOrder(1);
-			cp1.setPlanLength(3);
+			cp1.setPlanOrder(i);
+			cp1.setPlanLength(currentLength);
 			cp1.setDescription("This is the details of the section " + i + " of the course plan");
 			coursePlanDAO.save(cp1);
 			idList.add(cp1.getId());

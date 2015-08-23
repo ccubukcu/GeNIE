@@ -51,9 +51,9 @@ public enum GradingCriteria {
 
 	public static List<SelectItem> getAsSelectItemsForAchievements() {
         List<SelectItem> items = new ArrayList<SelectItem>();
-		items.add(new SelectItem(ASSIGNMENT.getIndex(), ResourceUtil.getLabel("gradingCriteria.label." + ASSIGNMENT.toString())));
-		items.add(new SelectItem(EXAM.getIndex(), ResourceUtil.getLabel("gradingCriteria.label." + EXAM.toString())));
-		items.add(new SelectItem(OTHER.getIndex(), ResourceUtil.getLabel("gradingCriteria.label." + OTHER.toString())));
+		items.add(new SelectItem(ASSIGNMENT.getIndex(), ResourceUtil.getLabel("gradingCriteria.enum." + ASSIGNMENT.toString())));
+		items.add(new SelectItem(EXAM.getIndex(), ResourceUtil.getLabel("gradingCriteria.enum." + EXAM.toString())));
+		items.add(new SelectItem(OTHER.getIndex(), ResourceUtil.getLabel("gradingCriteria.enum." + OTHER.toString())));
         return items;
     }
 

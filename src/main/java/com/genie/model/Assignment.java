@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import org.hibernate.envers.Audited;
 
 import com.genie.utils.DataFormatter;
+import com.genie.utils.LoggableEntity;
 
 /**
  * @author ccubukcu

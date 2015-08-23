@@ -13,10 +13,10 @@ import org.joda.time.DateTime;
 
 import com.genie.dao.AuditLogDAO;
 import com.genie.model.AuditLog;
-import com.genie.model.LoggableEntity;
 import com.genie.model.User;
 import com.genie.services.SessionService;
 import com.genie.utils.DaoUtil;
+import com.genie.utils.LoggableEntity;
 import com.genie.utils.PortalConstants;
 
 /**
