@@ -220,18 +220,11 @@ public class UserManagementBean extends BaseBean {
 	}
 	
 	public String getAuthorityButtonLabel() {
-		return updatingRole ? ResourceUtil.getLabel("general.labels.edit") : ResourceUtil.getLabel("general.labels.add");
+		return ResourceUtil.getButtonLabel(updatingRole);
 	}
 	
 	public String getDialogButtonClass() {
-		String baseClass = "submit-input grad-btn ln-tr";
-		if(updatingRole) {
-			baseClass += " edit-button";
-		} else {
-			baseClass += " add-button";
-		}
-		
-		return baseClass;
+		return ResourceUtil.getButtonClass(updatingRole);
 	}
 
 	public List<User> getUsers() {

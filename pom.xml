@@ -27,6 +27,15 @@
 		<application.port>8080</application.port>
 		<application.contextpath>/GeNIE</application.contextpath>
 
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<!-- Database Configuration Parameters -->
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		
+		<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+		<jdbc.url>jdbc:mysql://localhost/genie</jdbc.url>
+		<jdbc.username>root</jdbc.username>
+		<jdbc.password></jdbc.password>
+
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Hibernate Configuration Parameters -->
 		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
@@ -36,12 +45,13 @@
 		<hibernate.format.sql>true</hibernate.format.sql>
 		<hibernate.generate_statistics>true</hibernate.generate_statistics>
 		<hibernate.use_sql_comments>true</hibernate.use_sql_comments>
-
-		<!-- Control hibernate 2d level caching -->
-
-		<hibernate.ehcache.configuration.file>ehcache.xml</hibernate.ehcache.configuration.file>
-		<hibernate.use.second.level.cache>true</hibernate.use.second.level.cache>
-		<hibernate.use.query.cache>true</hibernate.use.query.cache>
+		<hibernate.use_unicode>true</hibernate.use_unicode>
+		<hibernate.connection.charSet>UTF-8</hibernate.connection.charSet>
+		
+		<hibernate.hbm2ddl>update</hibernate.hbm2ddl>
+		<hibernate.envers.prefix>LOG_</hibernate.envers.prefix>
+		<hibernate.envers.suffix></hibernate.envers.suffix>
+		<hibernate.envers.storeDataAtDelete>true</hibernate.envers.storeDataAtDelete>
 		
 		<!-- Database Parameters -->
 

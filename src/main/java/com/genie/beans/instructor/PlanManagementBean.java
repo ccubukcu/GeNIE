@@ -277,18 +277,11 @@ public class PlanManagementBean extends BaseBean {
 	}
 	
 	public String getDialogButtonLabel() {
-		return isUpdating() ? ResourceUtil.getLabel("general.labels.edit") : ResourceUtil.getLabel("general.labels.add");
+		return ResourceUtil.getButtonLabel(isUpdating());
 	}
 	
 	public String getDialogButtonClass() {
-		String baseClass = "submit-input grad-btn ln-tr";
-		if(updating) {
-			baseClass += " edit-button";
-		} else {
-			baseClass += " add-button";
-		}
-		
-		return baseClass;
+		return ResourceUtil.getButtonClass(isUpdating());
 	}
 	
 	public String getAssignmentDialogHeader() {
@@ -296,18 +289,11 @@ public class PlanManagementBean extends BaseBean {
 	}
 	
 	public String getAssignmentDialogButtonLabel() {
-		return updatingAssignment ? ResourceUtil.getLabel("general.labels.edit") : ResourceUtil.getLabel("general.labels.add");
+		return ResourceUtil.getButtonLabel(updatingAssignment);
 	}
 	
 	public String getAssignmentDialogButtonClass() {
-		String baseClass = "submit-input grad-btn ln-tr";
-		if(updatingAssignment) {
-			baseClass += " edit-button";
-		} else {
-			baseClass += " add-button";
-		}
-		
-		return baseClass;
+		return ResourceUtil.getButtonClass(updatingAssignment);
 	}
 	
 	public List<CoursePlan> getSemesterPlans() {

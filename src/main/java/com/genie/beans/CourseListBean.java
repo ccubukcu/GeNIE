@@ -6,13 +6,10 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import com.genie.model.Authority;
 import com.genie.model.SchoolYear;
 import com.genie.model.Semester;
 import com.genie.model.SemesterCourse;
 import com.genie.model.StudentGamificationSettings;
-import com.genie.model.User;
-import com.genie.security.Role;
 import com.genie.services.GamificationService;
 import com.genie.services.SchoolYearService;
 import com.genie.services.SemesterService;
@@ -75,21 +72,7 @@ public class CourseListBean extends BaseBean {
 	}
 	
 	public boolean isUserEnrolled(SemesterCourse sc) {
-		if(SessionService.getCurrentUser() != null) {
-			List<Authority> userAuth = SessionService.getCurrentUser().getAuthorities();
-			
-			if(userAuth != null) {
-				for (Authority authority : userAuth) {
-					if(authority.getSemesterId() != null && sc.getSemesterId() != null 
-							&& authority.getCourseId() != null && sc.getCourseId() != null
-							&& authority.getSemesterId().equals(sc.getSemesterId())
-							&& authority.getCourseId().equals(sc.getCourseId())) {
-						return true;
-					}
-				}
-			}
-		}
-		return false;
+		return UserService.isUserEnrolled(sc);
 	}
 	
 	public void prepareGamificationSettings(SemesterCourse sc) {
@@ -103,14 +86,11 @@ public class CourseListBean extends BaseBean {
 	
 	public void addOrUpdateGamificationSettings() {
 		try {
-			settings.setSemesterCourseId(selectedCourse.getId());
-			settings.setStudentName(SessionService.getUsername());
-			
 			if(settings.getId() != null) {
-				GamificationService.updateUserSettings(settings);
+				GamificationService.updateUserSettings(settings, selectedCourse);
 				updateSuccessful();
 			} else {
-				GamificationService.saveUserSettings(settings);
+				GamificationService.saveUserSettings(settings, selectedCourse);
 				saveSuccessful();
 			}
 		} catch (Exception e) {
@@ -135,16 +115,7 @@ public class CourseListBean extends BaseBean {
 	public void enrollInCourse() {
 		if(selectedCourse != null && validateKey()) {
 			try {
-				Authority enrollment = new Authority();
-				enrollment.setAuthority(Role.ROLE_STUDENT.toString());
-				enrollment.setSemesterId(selectedCourse.getSemesterId());
-				enrollment.setCourseId(selectedCourse.getCourseId());
-				
-				User currentUser = SessionService.getCurrentUser();
-				enrollment.setUsername(currentUser.getUsername());
-				currentUser.getAuthorities().add(enrollment);
-				
-				UserService.saveAuthority(enrollment);
+				UserService.enrollCurrentStudent(selectedCourse);
 				operationSuccessfulWithMessage("growl.courselist.enrollSuccessful");
 			} catch (Exception e) {
 				e.printStackTrace();

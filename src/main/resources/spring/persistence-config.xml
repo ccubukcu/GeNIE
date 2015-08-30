@@ -76,13 +76,13 @@
         
 		<property name="jpaProperties">
 			<props>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
-		        <prop key="hibernate.connection.CharSet">utf8</prop>
-		        <prop key="hibernate.connection.characterEncoding">utf8</prop>
-		        <prop key="hibernate.connection.useUnicode">true</prop>
-				<prop key="org.hibernate.envers.audit_table_prefix">LOG_</prop>
-				<prop key="org.hibernate.envers.audit_table_suffix"></prop>
-				<prop key="org.hibernate.envers.store_data_at_delete">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl}</prop>
+		        <prop key="hibernate.connection.CharSet">${hibernate.connection.charSet}</prop>
+		        <prop key="hibernate.connection.characterEncoding">${hibernate.connection.charSet}</prop>
+		        <prop key="hibernate.connection.useUnicode">${hibernate.connection.useUnicode}</prop>
+				<prop key="org.hibernate.envers.audit_table_prefix">${hibernate.envers.prefix}</prop>
+				<prop key="org.hibernate.envers.audit_table_suffix">${hibernate.envers.suffix}</prop>
+				<prop key="org.hibernate.envers.store_data_at_delete">${hibernate.envers.storeDataAtDelete}</prop>
 				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
 			</props>
 		</property>	

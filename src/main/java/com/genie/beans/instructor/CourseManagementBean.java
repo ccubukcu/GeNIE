@@ -400,18 +400,11 @@ public class CourseManagementBean extends BaseBean {
 	}
 	
 	public String getDialogButtonLabel() {
-		return updatingCourse ? ResourceUtil.getLabel("general.labels.edit") : ResourceUtil.getLabel("general.labels.add");
+		return ResourceUtil.getButtonLabel(updatingCourse);
 	}
 	
 	public String getDialogButtonClass() {
-		String baseClass = "submit-input grad-btn ln-tr";
-		if(updatingCourse) {
-			baseClass += " edit-button";
-		} else {
-			baseClass += " add-button";
-		}
-		
-		return baseClass;
+		return ResourceUtil.getButtonClass(updatingCourse);
 	}
 	
 	public String getSemCourseDialogHeader() {
@@ -419,18 +412,11 @@ public class CourseManagementBean extends BaseBean {
 	}
 	
 	public String getSemCourseDialogButtonLabel() {
-		return updatingSemesterCourse ? ResourceUtil.getLabel("general.labels.edit") : ResourceUtil.getLabel("general.labels.add");
+		return ResourceUtil.getButtonLabel(updatingSemesterCourse);
 	}
 	
 	public String getSemCourseDialogButtonClass() {
-		String baseClass = "submit-input grad-btn ln-tr";
-		if(updatingSemesterCourse) {
-			baseClass += " edit-button";
-		} else {
-			baseClass += " add-button";
-		}
-		
-		return baseClass;
+		return ResourceUtil.getButtonClass(updatingSemesterCourse);
 	}
 
 	public List<SemesterCourse> getSemesterCourses() {

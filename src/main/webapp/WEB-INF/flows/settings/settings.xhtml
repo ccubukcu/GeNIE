@@ -73,7 +73,7 @@
 
 
 							<h:outputText value="#{lbl['settings.label.about']}" styleClass="title-text" />
-							<p:inputTextarea maxlength="2500" value="#{settingsBean.currentUser.biography}"  placeholder="#{lbl['settings.label.about']}" />
+							<p:inputTextarea maxlength="2500" autoResize="false" value="#{settingsBean.currentUser.biography}"  placeholder="#{lbl['settings.label.about']}" />
 							<h:outputText id="display" value="#{lbl['settings.label.bioCounter']}" styleClass="regular-body-text" />
 							
 							<div class="input clearfix">

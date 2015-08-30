@@ -41,7 +41,7 @@
 							<p:tab title="#{lbl['gamificationSettings.label.generalTab']}">
 								<h:form id="generalTabForm">
 									<h:panelGrid>
-							            <p:commandButton update="@form :growl" oncomplete="setDropDownCarat(); setPaginatorClasses();" actionListener="#{gamificationSettingsBean.addOrUpdateGeneralSettings()}" style="margin-top:18px;"
+							            <p:commandButton update="@form :growl :tabView:leaderboardsTabForm" oncomplete="setDropDownCarat(); setPaginatorClasses();" actionListener="#{gamificationSettingsBean.addOrUpdateGeneralSettings()}" style="margin-top:18px;"
 											value="#{lbl['gamificationSettings.label.updateGeneralSettings']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
 											disabled="#{!gamificationSettingsBean.courseSelected}" />
 						            </h:panelGrid>
@@ -51,7 +51,7 @@
 										<h:outputText value="#{lbl['gamificationSettings.label.generalEnabled']}" styleClass="title-text" />
 										<h:panelGrid style="width: 100%;">
 											<p:selectOneButton value="#{gamificationSettingsBean.generalSettings.gamificationEnabled}" id="gamificationEnabled" 
-												required="true" requiredMessage="#{msg['error.select_value']}">
+												required="true" requiredMessage="#{msg['error.select_value']}" style="display:flex;">
 												<p:ajax update="badgesEnabled leaderboardsEnabled achievementsEnabled pointsName maxPoints"/>
 												<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
 												<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
@@ -133,8 +133,7 @@
 										<h:outputText value="#{lbl['gamificationSettings.label.leaderboardAnonymity']}" styleClass="title-text" />
 										<h:panelGrid columns="3">
 											<p:selectOneButton value="#{gamificationSettingsBean.leaderboardSettings.anonymous}" id="anonymity" 
-												required="true" requiredMessage="#{msg['error.select_value']}"
-												disabled="#{!gamificationSettingsBean.generalSettings.gamificationEnabled}">
+												required="true" requiredMessage="#{msg['error.select_value']}">
 												<f:selectItem itemLabel="#{lbl['gamificationSettings.label.anonymous']}" itemValue="true" />
 												<f:selectItem itemLabel="#{lbl['gamificationSettings.label.usernameVisible']}" itemValue="false" />
 											</p:selectOneButton>
@@ -347,7 +346,7 @@
 						
 						<h:outputText value="#{lbl['badge.label.description']}" styleClass="title-text" style="margin-top: 12px; display:block;"/>
 						<h:outputText id="longDesc" value="#{lbl['badge.label.descInfo']}" styleClass="regular-body-text" />
-						<p:inputTextarea maxlength="500" rows="3" value="#{gamificationSettingsBean.selectedBadge.description}"/>
+						<p:inputTextarea maxlength="500" autoResize="false" rows="3" value="#{gamificationSettingsBean.selectedBadge.description}"/>
 							
 						<div class="input clearfix">
 							<p:commandButton update="@form :growl :tabView:badgesTabForm:badgeTable :tabView:badgesTabForm:badge-operations" oncomplete="hideModalOnSuccess(args,'#badge-modal');"
@@ -494,7 +493,7 @@
 								
 								<h:outputText value="#{lbl['achievement.label.description']}" styleClass="title-text" style="margin-top: 12px; display:block;"/>
 								<h:outputText id="longDesc" value="#{lbl['achievement.label.descInfo']}" styleClass="regular-body-text" />
-								<p:inputTextarea maxlength="1000" rows="3" value="#{gamificationSettingsBean.selectedAchievement.description}"/>
+								<p:inputTextarea maxlength="1000" autoResize="false" rows="3" value="#{gamificationSettingsBean.selectedAchievement.description}"/>
 							</p:tab>
 							
 							<p:tab id="achCriteriaTab" title="#{lbl['achievement.label.criteriaTab']}">

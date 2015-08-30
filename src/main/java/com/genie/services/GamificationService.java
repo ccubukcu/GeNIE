@@ -31,7 +31,15 @@ import com.genie.utils.ResourceUtil;
 public class GamificationService {
 	
 	public static GamificationSettings getGeneralSettingsForSemesterCourse(Long semesterCourseId) {
-		return DaoUtil.getGamificationDAO().getGeneralSettingsForSemesterCourse(semesterCourseId);
+		GamificationSettings generalSettings = DaoUtil.getGamificationDAO().getGeneralSettingsForSemesterCourse(semesterCourseId);
+		
+		if(generalSettings == null) {
+			generalSettings = new GamificationSettings();
+			generalSettings.setPointsName(ResourceUtil.getLabel(PortalConstants.DEFAULT_POINTS_NAME_KEY));
+			generalSettings.setMaxConvertablePoints(PortalConstants.DEFAULT_MAX_CONVERTABLE_POINTS);
+		}
+		
+		return generalSettings;
 	}
 
 	public static void updateGeneralSettings(GamificationSettings generalSettings) {
@@ -43,7 +51,13 @@ public class GamificationService {
 	}
 
 	public static LeaderboardSettings getLeaderboardSettingsForSemesterCourse(Long semesterCourseId) {
-		return DaoUtil.getGamificationDAO().getLeaderboardSettingsForSemesterCourse(semesterCourseId);
+		LeaderboardSettings leaderboardSettings = DaoUtil.getGamificationDAO().getLeaderboardSettingsForSemesterCourse(semesterCourseId);
+		
+		if(leaderboardSettings == null) {
+			leaderboardSettings = new LeaderboardSettings();
+		}
+		
+		return leaderboardSettings;
 	}
 
 	public static void updateLeaderboardSettings(LeaderboardSettings leaderboardSettings) {
@@ -365,11 +379,15 @@ public class GamificationService {
 		return DaoUtil.getGamificationDAO().getUserSettings(SessionService.getUsername(), semesterCourseId);
 	}
 
-	public static void updateUserSettings(StudentGamificationSettings settings) {
+	public static void updateUserSettings(StudentGamificationSettings settings, SemesterCourse sc) {
+		settings.setSemesterCourseId(sc.getId());
+		settings.setStudentName(SessionService.getUsername());
 		DaoUtil.getGamificationDAO().update(settings);
 	}
 
-	public static void saveUserSettings(StudentGamificationSettings settings) {
+	public static void saveUserSettings(StudentGamificationSettings settings, SemesterCourse sc) {
+		settings.setSemesterCourseId(sc.getId());
+		settings.setStudentName(SessionService.getUsername());
 		DaoUtil.getGamificationDAO().save(settings);
 	}
 

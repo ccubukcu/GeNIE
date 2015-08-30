@@ -183,18 +183,11 @@ public class SemesterManagementBean extends BaseBean {
 	}
 	
 	public String getDialogButtonLabel() {
-		return isUpdating() ? ResourceUtil.getLabel("general.labels.edit") : ResourceUtil.getLabel("general.labels.add");
+		return ResourceUtil.getButtonLabel(isUpdating());
 	}
 	
 	public String getDialogButtonClass() {
-		String baseClass = "submit-input grad-btn ln-tr";
-		if(updating) {
-			baseClass += " edit-button";
-		} else {
-			baseClass += " add-button";
-		}
-		
-		return baseClass;
+		return ResourceUtil.getButtonClass(isUpdating());
 	}
 
 	public List<Semester> getSemesters() {

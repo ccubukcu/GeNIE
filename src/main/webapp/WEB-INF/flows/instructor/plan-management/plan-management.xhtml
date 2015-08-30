@@ -196,7 +196,7 @@
        						
 						<h:outputText value="#{lbl['plan.label.description']}" styleClass="title-text" style="margin-top: 12px; display:block;"/>
 						<h:outputText id="longDesc" value="#{lbl['planManagement.label.descInfo']}" styleClass="regular-body-text" />
-						<p:inputTextarea maxlength="1000" value="#{planManagementBean.selectedPlan.description}"/>
+						<p:inputTextarea maxlength="1000" autoResize="false" value="#{planManagementBean.selectedPlan.description}"/>
 						
 						<div class="input clearfix">
 							<p:commandButton update="planMsg planOrderMsg planLengthMsg :growl :planTableForm:tabView:operations :planTableForm:tabView:planTable" process="@form" oncomplete="hideModalOnSuccessWithDropdown(args, '#add-modal');"
@@ -319,7 +319,7 @@
      					
 						<h:outputText value="#{lbl['assignment.label.description']}" styleClass="title-text" style="margin-top: 12px; display:block;"/>
 						<h:outputText id="longDesc" value="#{lbl['assignment.label.descInfo']}" styleClass="regular-body-text" />
-						<p:inputTextarea maxlength="5000" value="#{planManagementBean.selectedAssignment.description}"/>
+						<p:inputTextarea maxlength="5000" autoResize="false" value="#{planManagementBean.selectedAssignment.description}"/>
 						
 						<div class="input clearfix">
 							<p:commandButton update=":growl @form :planTableForm:tabView:assignment-table :planTableForm:tabView:assignment-operations" process="@form" oncomplete="hideModalOnSuccessWithDropdown(args, '#assignment-modal');"

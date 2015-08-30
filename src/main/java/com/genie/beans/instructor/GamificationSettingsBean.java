@@ -33,7 +33,6 @@ import com.genie.services.CoursePlanService;
 import com.genie.services.CourseService;
 import com.genie.services.GamificationService;
 import com.genie.utils.DataFormatter;
-import com.genie.utils.PortalConstants;
 import com.genie.utils.ResourceUtil;
 
 /**
@@ -279,18 +278,11 @@ public class GamificationSettingsBean extends BaseBean {
 	}
 	
 	public String getBadgeDialogButtonLabel() {
-		return updatingBadge ? ResourceUtil.getLabel("general.labels.edit") : ResourceUtil.getLabel("general.labels.add");
+		return ResourceUtil.getButtonLabel(updatingBadge);
 	}
 	
 	public String getBadgeDialogButtonClass() {
-		String baseClass = "submit-input grad-btn ln-tr";
-		if(updatingBadge) {
-			baseClass += " edit-button";
-		} else {
-			baseClass += " add-button";
-		}
-		
-		return baseClass;
+		return ResourceUtil.getButtonClass(updatingBadge);
 	}
 	
 	public boolean isBadgeButtonsDisabled() {
@@ -542,18 +534,11 @@ public class GamificationSettingsBean extends BaseBean {
 	}
 	
 	public String getAchievementDialogButtonLabel() {
-		return updatingAchievement ? ResourceUtil.getLabel("general.labels.edit") : ResourceUtil.getLabel("general.labels.add");
+		return ResourceUtil.getButtonLabel(updatingAchievement);
 	}
 	
 	public String getAchievementDialogButtonClass() {
-		String baseClass = "submit-input grad-btn ln-tr";
-		if(updatingAchievement) {
-			baseClass += " edit-button";
-		} else {
-			baseClass += " add-button";
-		}
-		
-		return baseClass;
+		return ResourceUtil.getButtonClass(updatingAchievement);
 	}
 	
 	public boolean isAchievementButtonsDisabled() {
@@ -578,18 +563,7 @@ public class GamificationSettingsBean extends BaseBean {
 		
 		if(selectedCourse != null) {
 			generalSettings = GamificationService.getGeneralSettingsForSemesterCourse(selectedCourse.getId());
-			
-			if(generalSettings == null) {
-				generalSettings = new GamificationSettings();
-				generalSettings.setPointsName(ResourceUtil.getLabel(PortalConstants.DEFAULT_POINTS_NAME_KEY));
-				generalSettings.setMaxConvertablePoints(PortalConstants.DEFAULT_MAX_CONVERTABLE_POINTS);
-			}
-			
 			leaderboardSettings = GamificationService.getLeaderboardSettingsForSemesterCourse(selectedCourse.getId());
-			
-			if(leaderboardSettings == null) {
-				leaderboardSettings = new LeaderboardSettings();
-			}
 			
 			refreshBadges();
 			refreshAchievements();

@@ -181,11 +181,11 @@
 						
 						<h:outputText value="#{lbl['course.label.shortDesc']}" styleClass="title-text" style="margin-top: 8px; display:block;"/>
 						<h:outputText id="shortDesc" value="#{lbl['courseManagement.label.shortDescInfo']}" styleClass="regular-body-text" />
-						<p:inputTextarea maxlength="500" value="#{courseManagementBean.selectedCourse.shortDescription}"/>
+						<p:inputTextarea maxlength="500" autoResize="false" value="#{courseManagementBean.selectedCourse.shortDescription}"/>
 						
 						<h:outputText value="#{lbl['course.label.longDesc']}" styleClass="title-text" style="margin-top: 8px; display:block;"/>
 						<h:outputText id="longDesc" value="#{lbl['courseManagement.label.longDescInfo']}" styleClass="regular-body-text" />
-						<p:inputTextarea maxlength="5000" value="#{courseManagementBean.selectedCourse.longDescription}"/>
+						<p:inputTextarea maxlength="5000" autoResize="false" value="#{courseManagementBean.selectedCourse.longDescription}"/>
 
 						<div class="input clearfix">
 							<p:commandButton update="@form :growl :tabView:courseTableForm:crTable :tabView:courseTableForm:course-operations :tabView:semCourseTableForm" oncomplete="hideModalOnSuccess(args,'#add-course-modal');"

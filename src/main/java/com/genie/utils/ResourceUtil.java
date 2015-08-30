@@ -125,4 +125,19 @@ public class ResourceUtil {
 		}
 		return "";
 	}
+	
+	public static String getButtonLabel(boolean comparison) {
+		return comparison ? ResourceUtil.getLabel("general.labels.edit") : ResourceUtil.getLabel("general.labels.add");
+	}
+	
+	public static String getButtonClass(boolean comparison) {
+		String baseClass = "submit-input grad-btn ln-tr";
+		if(comparison) {
+			baseClass += " edit-button";
+		} else {
+			baseClass += " add-button";
+		}
+		
+		return baseClass;
+	}
 }

@@ -3,190 +3,190 @@
   generalizations="true" realizations="true" associations="true" dependencies="false" nesting-relationships="true">  
   <class id="1" language="java" name="com.genie.model.StudentGamificationSettings" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/StudentGamificationSettings.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="250" y="357"/>    
+    <position height="-1" width="-1" x="998" y="865"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="2" language="java" name="com.genie.model.Badge" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/Badge.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="261" y="291"/>    
+    <position height="-1" width="-1" x="424" y="531"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="3" language="java" name="com.genie.model.Achievement" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/Achievement.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="367" y="179"/>    
+    <position height="-1" width="-1" x="629" y="374"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="4" language="java" name="com.genie.model.SemesterCourse" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/SemesterCourse.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="538" y="353"/>    
+    <position height="-1" width="-1" x="834" y="625"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="5" language="java" name="com.genie.model.LeaderboardSettings" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/LeaderboardSettings.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="257" y="419"/>    
+    <position height="-1" width="-1" x="1212" y="844"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="6" language="java" name="com.genie.model.Semester" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/Semester.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="536" y="542"/>    
+    <position height="-1" width="-1" x="451" y="819"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="7" language="java" name="com.genie.model.StudentAttendance" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/StudentAttendance.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="308" y="528"/>    
+    <position height="-1" width="-1" x="1404" y="810"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="8" language="java" name="com.genie.model.StudentPoint" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/StudentPoint.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="425" y="498"/>    
+    <position height="-1" width="-1" x="468" y="680"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="9" language="java" name="com.genie.model.CoursePlan" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/CoursePlan.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="714" y="436"/>    
+    <position height="-1" width="-1" x="1280" y="672"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="10" language="java" name="com.genie.model.GamificationSettings" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/GamificationSettings.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="244" y="475"/>    
+    <position height="-1" width="-1" x="633" y="867"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="11" language="java" name="com.genie.model.Course" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/Course.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="611" y="447"/>    
+    <position height="-1" width="-1" x="811" y="863"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="12" language="java" name="com.genie.model.GradeCriteria" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/GradeCriteria.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="624" y="266"/>    
+    <position height="-1" width="-1" x="899" y="453"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="13" language="java" name="com.genie.model.StudentGrade" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/StudentGrade.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="688" y="329"/>    
+    <position height="-1" width="-1" x="1121" y="533"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="14" language="java" name="com.genie.model.AchievementProgress" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/AchievementProgress.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="384" y="116"/>    
+    <position height="-1" width="-1" x="857" y="272"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="15" language="java" name="com.genie.model.StudentBadge" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/StudentBadge.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="226" y="236"/>    
+    <position height="-1" width="-1" x="264" y="546"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="16" language="java" name="com.genie.model.SchoolYear" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/SchoolYear.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="701" y="535"/>    
+    <position height="-1" width="-1" x="273" y="792"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="17" language="java" name="com.genie.model.AchievementProgressItem" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/AchievementProgressItem.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="654" y="117"/>    
+    <position height="-1" width="-1" x="1121" y="262"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="18" language="java" name="com.genie.model.Assignment" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/Assignment.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="831" y="225"/>    
+    <position height="-1" width="-1" x="1301" y="408"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="19" language="java" name="com.genie.model.AssignmentSubmission" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/AssignmentSubmission.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="902" y="114"/>    
+    <position height="-1" width="-1" x="1423" y="259"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="20" language="java" name="com.genie.model.CourseMaterial" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/CourseMaterial.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="855" y="359"/>    
+    <position height="-1" width="-1" x="1456" y="678"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
   <class id="21" language="java" name="com.genie.model.Document" project="GeNIE" 
     file="/GeNIE/src/main/java/com/genie/model/Document.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="929" y="249"/>    
+    <position height="-1" width="-1" x="1451" y="492"/>    
     <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="false">      
-      <attributes public="false" package="false" protected="false" private="false" static="false"/>      
+      <attributes public="true" package="true" protected="true" private="true" static="false"/>      
       <operations public="false" package="false" protected="false" private="false" static="false"/>    
     </display>  
   </class>  
@@ -383,7 +383,7 @@
     <display labels="false" multiplicity="false"/>  
   </association>  
   <association id="94">    
-    <bendpoint x="487" y="279"/>    
+    <bendpoint x="783" y="551"/>    
     <end type="SOURCE" refId="3" navigable="false">      
       <attribute id="95" name="semesterCourse"/>      
       <multiplicity id="96" minimum="0" maximum="1"/>    

@@ -159,7 +159,7 @@
 						</h:panelGrid>
 						
 						<h:outputText value="#{lbl['semester.label.notes']}" styleClass="title-text" style="margin-top: 8px; display: block;"/>
-						<p:inputTextarea maxlength="1000" value="#{semesterManagementBean.selectedSemester.notes}"/>
+						<p:inputTextarea maxlength="1000" autoResize="false" value="#{semesterManagementBean.selectedSemester.notes}"/>
 						<h:outputText id="display" value="#{lbl['semesterManagement.label.noteCounter']}" styleClass="regular-body-text" />
 
 						<div class="input clearfix">

@@ -15,6 +15,7 @@ import com.genie.model.Authority;
 import com.genie.model.SemesterCourse;
 import com.genie.model.User;
 import com.genie.scheduling.jobs.SingularMailSenderJob;
+import com.genie.security.Role;
 import com.genie.utils.DaoUtil;
 import com.genie.utils.DataFormatter;
 import com.genie.utils.JsfUtil;
@@ -153,5 +154,35 @@ public class UserService implements Serializable{
 
 	public static List<User> getAllBySemesterCourseExceptUser(SemesterCourse semesterCourse) {
 		return DaoUtil.getUserDAO().getAllBySemesterCourseExceptUser(semesterCourse.getCourseId(), semesterCourse.getSemesterId(), SessionService.getUsername());
+	}
+
+	public static boolean isUserEnrolled(SemesterCourse sc) {
+		if(SessionService.getCurrentUser() != null) {
+			List<Authority> userAuth = SessionService.getCurrentUser().getAuthorities();
+			
+			if(userAuth != null) {
+				for (Authority authority : userAuth) {
+					if(authority.getSemesterId() != null && sc.getSemesterId() != null 
+							&& authority.getCourseId() != null && sc.getCourseId() != null
+							&& authority.getSemesterId().equals(sc.getSemesterId())
+							&& authority.getCourseId().equals(sc.getCourseId())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public static void enrollCurrentStudent(SemesterCourse selectedCourse) {
+		Authority enrollment = new Authority();
+		enrollment.setAuthority(Role.ROLE_STUDENT.toString());
+		enrollment.setSemesterId(selectedCourse.getSemesterId());
+		enrollment.setCourseId(selectedCourse.getCourseId());
+		
+		User currentUser = SessionService.getCurrentUser();
+		enrollment.setUsername(currentUser.getUsername());
+		currentUser.getAuthorities().add(enrollment);
+		UserService.saveAuthority(enrollment);
 	}
 }

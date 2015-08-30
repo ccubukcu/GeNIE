@@ -72,14 +72,11 @@ public class MyCoursesBean extends BaseBean {
 	
 	public void addOrUpdateGamificationSettings() {
 		try {
-			settings.setSemesterCourseId(selectedCourse.getId());
-			settings.setStudentName(SessionService.getUsername());
-			
 			if(settings.getId() != null) {
-				GamificationService.updateUserSettings(settings);
+				GamificationService.updateUserSettings(settings, selectedCourse);
 				updateSuccessful();
 			} else {
-				GamificationService.saveUserSettings(settings);
+				GamificationService.saveUserSettings(settings, selectedCourse);
 				saveSuccessful();
 			}
 		} catch (Exception e) {

@@ -50,7 +50,10 @@ import com.genie.utils.ResourceUtil;
  *
  */
 public class AfterLoadControllerBean extends SpringBeanAutowiringSupport implements ApplicationListener<ContextRefreshedEvent>{
-
+	
+	
+	private boolean createDummyData = false;
+	
 	@Autowired
 	private UserDAO userDAO;
 	@Autowired
@@ -74,10 +77,12 @@ public class AfterLoadControllerBean extends SpringBeanAutowiringSupport impleme
 	public void onApplicationEvent(ContextRefreshedEvent arg0) {
 		checkAdminUser();
 		
-		User ins = userDAO.getByUsername("instructor");
-		
-		if(ins == null) {
-			createTestUsers();
+		if(createDummyData) {
+			User ins = userDAO.getByUsername("instructor");
+			
+			if(ins == null) {
+				createTestUsers();
+			}
 		}
 	}
 	
