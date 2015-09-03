@@ -8,53 +8,10 @@
 		</layout>
 	</appender>
 
-<!-- 	<appender name="File" class="org.apache.log4j.DailyRollingFileAppender"> -->
-<!-- 		<param name="File" value="${thy.appdir}/IOCC/log/${project.name}" /> -->
-<!-- 		<param name="Append" value="true" /> -->
-<!-- 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" /> -->
-<!-- 		<layout class="org.apache.log4j.PatternLayout"> -->
-<!-- 			<param name="ConversionPattern" value="%d{ABSOLUTE} %5p %c{1}:%L - %m%n" /> -->
-<!-- 		</layout> -->
-<!-- 	</appender> -->
-
-	<!--
-		<appender name="File" class="org.apache.log4j.RollingFileAppender">
-			<param name="File" value="${project.name}-${project.version}.log" />
-			<param name="MaxFileSize" value="1000KB" />
-			<param name="MaxBackupIndex" value="20" />
-	
-			<layout class="org.apache.log4j.PatternLayout">
-				<param name="ConversionPattern" value="[${name}] - %d{ISO8601} - %X{login} - %m%n" />
-			</layout>
-		</appender>
-	-->
-
-<!-- 	<appender name="IslemLog" class="org.apache.log4j.DailyRollingFileAppender"> -->
-<!-- 		<param name="File" value="${thy.appdir}/IOCC/log/${project.name}_islem" /> -->
-<!-- 		<param name="Append" value="true" /> -->
-<!-- 		<param name="DatePattern" value="'.'yyyy-MM-dd'.log'" /> -->
-<!-- 		<layout class="org.apache.log4j.PatternLayout"> -->
-<!-- 			<param name="ConversionPattern" value="%d{ABSOLUTE} %5p %c{1}:%L - %m%n" /> -->
-<!-- 		</layout> -->
-<!-- 	</appender> -->
-
-			<!-- <param name="ConversionPattern" value="%d{ABSOLUTE} | %-5p | %-10t | %-24.24c{1} | %-30.30C %4L | %m%n" /> -->
 	<logger name="com.genie.logger">
 		<level value="error" />
 	</logger>
 
-<!-- 	<logger name="islemlog/" additivity="false"> -->
-<!-- 		<level value="info" /> -->
-<!-- 		<appender-ref ref="IslemLog" /> -->
-<!-- 	</logger> -->
-
-
-	<!-- JSF Phase listener (debug purpose) -->
-	<!-- <logger name="org.springframework.faces.support.RequestLoggingPhaseListener"> -->
-	<!-- <level value="${log4j.level}" /> -->
-	<!-- </logger> -->
-
-	<!-- TRANSACTION -->
 	<logger name="org.springframework.transaction">
 		<level value="error" />
 	</logger>
@@ -84,6 +41,10 @@
 <!-- 	</logger> -->
 
 	<logger name="log4j.logger.org.apache">
+		<level value="error"></level>
+	</logger>
+	
+	<logger name="log4j.logger.org.quartz">
 		<level value="error"></level>
 	</logger>
 

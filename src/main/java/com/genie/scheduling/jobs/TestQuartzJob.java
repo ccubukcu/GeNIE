@@ -7,7 +7,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
-import com.genie.email.MailUser;
+import com.genie.email.Email;
 import com.genie.scheduling.AbstractQuartzJob;
 import com.genie.scheduling.QuartzScheduler;
 
@@ -23,19 +23,21 @@ public class TestQuartzJob extends AbstractQuartzJob {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
-		MailUser test = (MailUser) jobData.get(KEY);
+		Email test = (Email) jobData.get(KEY);
 		
-		System.out.println(test.getEmail());
-		System.out.println(test.isCc());
+		System.out.println(test.getFrom());
+		System.out.println(test.getTo());
 		System.out.println("*********************");
 	}
 	
 	
 	public static boolean scheduleNewJob() {
 		TestQuartzJob job = new TestQuartzJob();
-		MailUser user = new MailUser("aerogelius@gmail.com", true);
+		Email testEmail = new Email();
+		testEmail.setFrom("testFrom@test.com");
+		testEmail.setTo("testTo@test.com");
 		
-		job.insertDataToJobDataMap(KEY, user);
+		job.insertDataToJobDataMap(KEY, testEmail);
 		
 		DateTime startDate = DateTime.now();
 		startDate = startDate.secondOfMinute().addToCopy(100);

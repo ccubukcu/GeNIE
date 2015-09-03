@@ -114,10 +114,10 @@ public class UserBean extends BaseBean {
 					UserService.authenticateUser(newUser.getUsername(), newUser.getPassword());					
 			    	JsfUtil.redirect("settings");
 				} else {
-					JsfUtil.addErrorMessage("common.errorOnSave");
+					operationFailed();
 				}
 			} catch (Exception e){
-				JsfUtil.addErrorMessage("common.errorOnSave");
+				operationFailed();
 				e.printStackTrace();
 			}
 		}
@@ -153,29 +153,32 @@ public class UserBean extends BaseBean {
 	
 	public void sendPasswordReminder() {
 		try {
-			UserService.sendPasswordReminder(username);
+			User user = UserService.getUserByUsername(username);
+			if(user != null && user.getUsername() != null) {
+				UserService.sendPasswordReminder(user);
+			} else {
+				validationFailed("recoveryForm:username", "error.forgotpass.usernamenotfound");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void updateUserPassword() {
-		// oncelikle url token'i kontrol et, buradan bir username geliyor mu bak
-		// gelmiyorsa hata ver invalid token diye ve tusu disable et
-		
 		if(validateToken(false) && recoveryUser != null) {
-			recoveryUser.setPassword(DataFormatter.md5String(recoveryUser.getPassword()));
+			recoveryUser.setPassword(DataFormatter.md5String(newPassword));
 			try {
 				if(UserService.updateUser(recoveryUser)){
-					emailSent = 1;
+//					recoveryUser.setTokenValidUntil(null);
+//					recoveryUser.setPassToken(null);
+					UserService.authenticateUser(recoveryUser.getUsername(), recoveryUser.getPassword());					
+			    	JsfUtil.redirect("settings");
 				} else {
 					JsfUtil.addErrorMessage("common.errorOnSave");
-					emailSent = 0;
 				}
 			} catch (Exception e){
 				JsfUtil.addErrorMessage("common.errorOnSave");
 				e.printStackTrace();
-				emailSent = 0;
 			}
 		}
 	}
@@ -194,7 +197,7 @@ public class UserBean extends BaseBean {
 		if(DateTime.now().isAfterNow())
 			return false;
 		
-		if(!newPassword.equals(confirmNewPassword) && !isInitialCheck) {
+		if(!isInitialCheck && !newPassword.equals(confirmNewPassword)) {
 			JsfUtil.addMessage("recoveryForm:password", FacesMessage.SEVERITY_ERROR, "error.no_match_password");
 			JsfUtil.addMessage("recoveryForm:confirmpassword", FacesMessage.SEVERITY_ERROR, "error.no_match_password");
 			FacesContext.getCurrentInstance().validationFailed();

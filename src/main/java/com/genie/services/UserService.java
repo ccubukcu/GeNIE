@@ -76,8 +76,7 @@ public class UserService implements Serializable{
 		return DaoUtil.getUserDAO().getByUsernameAndPassword(username, password) != null;
 	}
 	
-	public static void sendPasswordReminder(String username) {
-		User u = getUserByUsername(username);
+	public static void sendPasswordReminder(User u) {
 		String token = DataFormatter.generateRandomToken();
 		
 		DateTime dt = DateTime.now();
@@ -92,7 +91,7 @@ public class UserService implements Serializable{
 		String subject = ResourceUtil.getLabel("email.passreminder.subject");
 		String body = ResourceUtil.getLabel("email.passreminder.body", url);
 		
-		String uniqueName = "ReminderJobFor" + username;
+		String uniqueName = "ReminderJobFor" + u.getUsername();
 		SingularMailSenderJob.scheduleJob(uniqueName, subject, body, u.getEmail(), null, null);
 	}
 	

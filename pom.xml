@@ -58,7 +58,18 @@
 		<groupId.jdbc>mysql</groupId.jdbc>
 		<artifactId.jdbc>mysql-connector-java</artifactId.jdbc>
 		<sql-maven-plugin.delimiter>;</sql-maven-plugin.delimiter>
-
+		
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		<!-- SMTP Host Configuration Parameters -->
+		<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+		
+		<smtp.host>smtp.gmail.com</smtp.host>
+		<smtp.username></smtp.username>
+		<smtp.password></smtp.password>
+		<email.fromAddress></email.fromAddress>
+		<smtp.sslEnabled>true</smtp.sslEnabled>
+		<smtp.port>465</smtp.port>
+		
 		<!-- ~~~~~~~~~~~~~~~~~~~ -->
 		<!-- Dependency Versions -->
 		<!-- ~~~~~~~~~~~~~~~~~~~ -->

@@ -43,14 +43,14 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="input">
-											<p:password id="password" required="true"  requiredMessage="#{msg['error.enter_value']}" value="#{userBean.password}" styleClass="password-input" placeholder="#{lbl['general.labels.password']}"/>
+											<p:password id="password" required="true"  requiredMessage="#{msg['error.enter_value']}" value="#{userBean.newPassword}" styleClass="password-input" placeholder="#{lbl['general.labels.password']}"/>
           									<p:message for="password" />
                                         </div>
                                     </div>
                                     
                                     <div class="col-md-12">
                                         <div class="input">
-											<p:password id="confirmpassword" required="true"  requiredMessage="#{msg['error.enter_value']}" value="#{userBean.password}" styleClass="password-input" placeholder="#{lbl['register.label.confirmpassword']}"/>
+											<p:password id="confirmpassword" required="true"  requiredMessage="#{msg['error.enter_value']}" value="#{userBean.confirmNewPassword}" styleClass="password-input" placeholder="#{lbl['register.label.confirmpassword']}"/>
           									<p:message for="confirmpassword" />
                                         </div>
                                     </div>

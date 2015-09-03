@@ -4,7 +4,7 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import com.genie.email.MailingPointHandler;
+import com.genie.email.EmailOperationHandler;
 import com.genie.scheduling.AbstractQuartzJob;
 import com.genie.scheduling.QuartzScheduler;
 
@@ -35,7 +35,7 @@ public class SingularMailSenderJob extends AbstractQuartzJob{
 		String cc = jobData.getString(CC_KEY);
 		String bcc = jobData.getString(BCC_KEY);
 		
-		MailingPointHandler.sendSingularMail(subject, body, to, cc, bcc);
+		EmailOperationHandler.sendSingularMail(subject, body, to, cc, bcc);
 	}
 	
 	public static boolean scheduleJob(String uniqueJobName, String subject, String body, String to, String cc, String bcc) {

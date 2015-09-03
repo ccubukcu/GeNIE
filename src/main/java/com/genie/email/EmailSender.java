@@ -22,11 +22,15 @@ public final class EmailSender {
 	private static String smtpHost = "";
 	private static String user = "";
 	private static String password = "";
+	private static String port = "";
+	private static boolean sslEnabled = false;
 	
-	public EmailSender(String _smtpHost, String _user, String _password) {
+	public EmailSender(String _smtpHost, String _user, String _password, String _port, boolean _sslEnabled) {
 		smtpHost = _smtpHost;
 		user = _user;
 		password = _password;
+		port = _port;
+		sslEnabled = _sslEnabled;
 	}
 	
 	public java.lang.String getSmtpHost() {
@@ -52,13 +56,20 @@ public final class EmailSender {
 	        Properties props = new Properties();
 	        if (smtpHost != null) {
 	        	props.put("mail.smtp.host", smtpHost);
+	        	props.put("mail.smtp.port", port);
 	        }
 	        //Authentication if required
 	        Session session = null;
 			Authenticator authenticator = null;
 			if (user!=null && password!=null )
 			{
+				if(sslEnabled) {
+					props.put("mail.smtp.socketFactory.port", port);
+					props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+					props.put("mail.smtp.socketFactory.fallback", "false");
+				}
 				props.put("mail.smtp.auth", "true");
+				
 				authenticator = new Authenticator()
 				{
 					protected PasswordAuthentication getPasswordAuthentication()
