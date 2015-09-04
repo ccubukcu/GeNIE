@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="Console" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[${name}] - %d{ISO8601} - %X{login} - %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="com.genie.logger">
+		<level value="error" />
+	</logger>
+
+	<logger name="org.springframework.transaction">
+		<level value="error" />
+	</logger>
+	<logger name="org.springframework.orm.hibernate3">
+		<level value="error" />
+	</logger>
+
+	<!-- HIBERNATE & CACHE SPECIFIC -->
+	<logger name="org.hibernate.cache.EhCacheProvider">
+		<level value="error" />
+	</logger>
+
+	<logger name="org.hibernate">
+		<level value="error" />
+	</logger>
+
+	<!-- Log Hibernate SQL queries to file (log level must be DEBUG to enable it) -->
+	<logger name="org.hibernate.SQL" additivity="false">
+		<level value="error" />
+		<appender-ref ref="Console" />
+	</logger>
+
+	<!-- log the param value in the prepared statement and the query result! (log level must be TRACE to enable it) -->
+<!-- 	<logger name="org.hibernate.type"> -->
+<!-- 	<level value="trace" /> -->
+<!-- 	<appender-ref ref="Console"/> -->
+<!-- 	</logger> -->
+
+	<logger name="log4j.logger.org.apache">
+		<level value="error"></level>
+	</logger>
+	
+	<logger name="log4j.logger.org.quartz">
+		<level value="error"></level>
+	</logger>
+
+	<!-- OTHER OPEN SOURCE PACKAGES -->
+	<logger name="org.springframework.security">
+		<level value="error" />
+	</logger>
+	<logger name="org.springframework.web.filter">
+		<level value="error" />
+	</logger>
+	<logger name="org.apache.commons">
+		<level value="error" />
+	</logger>
+	<logger name="org.springframework">
+		<level value="error" />
+	</logger>
+	<logger name="org.springframework.beans.factory.support">
+		<level value="error" />
+	</logger>	
+	<root>
+		<level value="ERROR" />
+		<priority value="error" />
+		<appender-ref ref="Console" /><!-- close Console in production environments -->
+	</root>
+</log4j:configuration>

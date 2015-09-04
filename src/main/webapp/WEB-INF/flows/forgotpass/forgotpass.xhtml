@@ -1,0 +1,73 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.forgotpass.title']}</ui:define>
+	
+	<ui:define name="pageTitle">#{lbl['pages.forgotpass.header']}</ui:define>
+	<ui:define name="pageDescription">#{lbl['pages.forgotpass.description']}</ui:define>
+	
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#home_menu_item");
+	    </script>
+	
+		<section class="login-page fadeInDown-animation">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="login-form">
+                            <div class="login-title">
+	                            <h:panelGroup styleClass="icon">
+                                		<i class="fa fa-group"> </i>
+                                	</h:panelGroup>
+                                
+                                    <h:outputText value="#{lbl['forgotpass.label.header']}" styleClass="text" />
+                                    <h:panelGroup layout="block" styleClass="register-text">
+                                    	<h:outputText value="#{lbl['forgotpass.text.description']}" />
+                                    </h:panelGroup>
+                                    
+                                    <h:panelGroup layout="block" styleClass="register-text">
+                                    	<h:outputText style="color:#ff0000; font-weight:bold;" rendered="#{userBean.emailSent == 0}" value="#{msg['error.forgotpass.usernamenotfound']} "></h:outputText>
+                                    </h:panelGroup>
+                                    
+                                    <h:panelGroup layout="block" styleClass="register-text">
+                                    	<h:outputText style="color:#ff0000; font-weight:bold;" rendered="#{userBean.emailSent == 1}" value="#{msg['email.recoveryEmailSent']} "></h:outputText>
+                                    </h:panelGroup>
+                            </div><!-- End Title -->
+				
+                            <h:form id="recoveryForm">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="input">
+											<p:inputText id="username" required="true"  requiredMessage="#{msg['error.enter_value']}" value="#{userBean.username}" styleClass="text-input" placeholder="#{lbl['general.labels.username']}"/>
+          									<p:message for="username" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-12">
+                                        <div class="input clearfix">
+                                        	<p:commandButton update="@form" value="#{lbl['forgotpass.label.sendemail']}" styleClass="submit-input grad-btn ln-tr" actionListener="#{userBean.sendPasswordReminder()}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="forgot fr">
+                                            <a href="signin" class="new-user">#{lbl['register.label.already_member']}</a>
+                                        </div>
+                                    </div>
+                                </div><!-- end row -->
+                            </h:form>
+                        </div><!-- end login form -->
+                    </div><!-- end col-md-8/offset -->
+                </div><!-- end row -->
+            </div><!-- end container -->
+        </section><!-- End Login Page -->
+	</ui:define>
+</ui:composition>

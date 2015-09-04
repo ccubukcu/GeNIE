@@ -1,0 +1,38 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+	
+	<ui:define name="title">#{lbl['pages.error.403title']}</ui:define>
+	
+	<ui:define name="pageTitle">#{lbl['pages.error.403header']}</ui:define>
+	<ui:define name="pageDescription"></ui:define>
+	
+	<ui:define name="content">
+		<script type="text/javascript">
+	    	$(function() {
+	    		$("nav>ul>li.current_page_item").removeClass("current_page_item");
+	    		$("#home_menu_item").addClass("current_page_item");
+	    	});
+	    </script>
+
+            <section class="error-page">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <div class="not-found">
+                                <span class="num">403</span>
+                                <span class="text">#{lbl['pages.error.403message']}</span>
+                            </div><!-- end 404 circle -->
+                            <div class="error-message">#{lbl['pages.error.403description']}</div><!-- end error msg -->
+                        </div>
+                    </div>
+                </div><!-- end container -->
+            </section><!-- end 404 section -->
+    </ui:define>
+
+</ui:composition>

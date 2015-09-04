@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="geniePU" transaction-type="RESOURCE_LOCAL">
+  	<class>com.genie.model.AuditLog</class>
+  	<class>com.genie.model.Authority</class>
+  	<class>com.genie.model.User</class>
+  	<class>com.genie.model.SystemProperties</class>
+  	<class>com.genie.model.Achievement</class>
+  	<class>com.genie.model.AchievementProgress</class>
+  	<class>com.genie.model.AchievementProgressItem</class>
+  	<class>com.genie.model.Assignment</class>
+  	<class>com.genie.model.AssignmentSubmission</class>
+  	<class>com.genie.model.Attendance</class>
+  	<class>com.genie.model.Badge</class>
+  	<class>com.genie.model.Course</class>
+  	<class>com.genie.model.CourseMaterial</class>
+  	<class>com.genie.model.CoursePlan</class>
+  	<class>com.genie.model.Document</class>
+  	<class>com.genie.model.GamificationSettings</class>
+  	<class>com.genie.model.GradeCriteria</class>
+  	<class>com.genie.model.LeaderboardSettings</class>
+  	<class>com.genie.model.SchoolYear</class>
+  	<class>com.genie.model.Semester</class>
+  	<class>com.genie.model.SemesterCourse</class>
+  	<class>com.genie.model.StudentAttendance</class>
+  	<class>com.genie.model.StudentGamificationSettings</class>
+  	<class>com.genie.model.StudentGrade</class>
+  	<class>com.genie.model.StudentPoint</class>
+  </persistence-unit>
+</persistence>

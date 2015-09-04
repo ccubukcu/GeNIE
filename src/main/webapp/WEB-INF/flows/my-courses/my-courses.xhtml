@@ -1,0 +1,161 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.myCourses.title']}</ui:define>
+
+	<ui:define name="pageTitle">#{lbl['pages.myCourses.header']}</ui:define>
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#my_courses_menu_item");
+		</script>
+
+		<section class="full-section latest-courses-section no-slider">
+			<h:form id="semCourseForm">
+				<ui:repeat var="sc" value="#{myCoursesBean.semCourses}">
+					<div class="container">
+						<h:panelGroup layout="block" styleClass="col-md-12">
+							<div class="course clearfix">
+								<div class="course-info">
+									<h3 class="course-title ln-tr">#{sc.course.courseIdentifier} - #{sc.course.courseName}</h3>
+									<p class="course-description">#{sc.course.shortDescription}</p>
+		
+										<h:panelGroup layout="block" styleClass="buttons fr"
+											style="display: flex;">
+											
+											<p:commandButton update=":growl :gamificationForm"
+												value="#{lbl['courseList.label.gamificationSettings']}" oncomplete="openModal('#gamification-modal')"
+												actionListener="#{myCoursesBean.prepareGamificationSettings(sc)}"
+												styleClass="submit-input grad-btn ln-tr width-200" />
+												
+											<p:commandButton update=":growl" 
+												value="#{lbl['courseList.label.goToCourse']}" actionListener="#{myCoursesBean.goToCourse(sc)}"
+												styleClass="submit-input grad-btn ln-tr width-200" />
+												
+											<p:commandButton update=":growl :unenrollApprovalForm"
+												value="#{lbl['courseList.label.unenroll']}" oncomplete="openModal('#unenroll-approval-modal')"
+												actionListener="#{myCoursesBean.setSelectedCourse(sc)}"
+												styleClass="submit-input grad-btn clear-button ln-tr width-200" />
+										</h:panelGroup>
+								</div>
+							</div>
+						</h:panelGroup>
+					</div>
+				</ui:repeat>
+			</h:form>
+		</section>
+		
+		<div class="modal fade" id="unenroll-approval-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" >
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-trash-o fa-lg fa-lh-1"></i></span>
+						<span class="text">#{lbl['courseList.labels.unenrollConfirmation']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" onclick="hideModal('#unenroll-approval-modal');">
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<h:form id="unenrollApprovalForm" styleClass="modal-dialog-form">
+						
+						<h:outputText value="#{myCoursesBean.getUnenrollMessage()}" styleClass="title-text" />
+
+						<div class="input clearfix">
+							<p:commandButton update=":growl :semCourseForm" process="@form"
+								oncomplete="hideModal('#unenroll-approval-modal');"
+								value="#{lbl['general.labels.unenroll']}"
+								styleClass="submit-input grad-btn ln-tr delete-button"
+								actionListener="#{myCoursesBean.unenrollFromCourse()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+			<!-- End Dialog -->
+		</div>
+		
+		<div class="modal fade containing-div" id="gamification-modal" tabindex="-1" role="dialog" data-backdrop="static"  data-keyboard="false"
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="gamification-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{lbl['courseList.label.gamificationSettings']}</span>
+							
+							<p:commandLink styleClass="close-modal fr" onclick="hideModal('#gamification-modal'); setDropDownCarat();">
+						        <i class="fa fa-close fa-2x"></i>
+						    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="gamificationForm" styleClass="modal-dialog-form">
+						<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol" styleClass="full-width-grid">
+							
+							<h:outputText value="#{lbl['gamificationSettings.label.generalEnabled']}" styleClass="title-text" />
+								<h:panelGrid style="width: 100%;">
+									<p:selectOneButton value="#{myCoursesBean.settings.gamificationEnabled}" id="gamificationEnabled" 
+										required="true" requiredMessage="#{msg['error.select_value']}">
+										<p:ajax update="badgesEnabled leaderboardsEnabled achievementsEnabled"/>
+										<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+										<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+									</p:selectOneButton>
+									<p:message for="gamificationEnabled" />
+								</h:panelGrid>
+								
+								<h:outputText value="#{lbl['gamificationSettings.label.leaderboardsEnabled']}" styleClass="title-text" />
+								<h:panelGrid style="width: 100%;">
+									<p:selectOneButton value="#{myCoursesBean.settings.leaderboardsEnabled}" id="leaderboardsEnabled" 
+										required="true" requiredMessage="#{msg['error.select_value']}"
+										disabled="#{!myCoursesBean.settings.gamificationEnabled}">
+										<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+										<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+									</p:selectOneButton>
+									<p:message for="leaderboardsEnabled" />
+								</h:panelGrid>
+								
+								<h:outputText value="#{lbl['gamificationSettings.label.badgesEnabled']}" styleClass="title-text" />
+								<h:panelGrid style="width: 100%;">
+									<p:selectOneButton value="#{myCoursesBean.settings.badgesEnabled}" id="badgesEnabled" 
+										required="true" requiredMessage="#{msg['error.select_value']}"
+										disabled="#{!myCoursesBean.settings.gamificationEnabled}">
+										<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+										<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+									</p:selectOneButton>
+									<p:message for="badgesEnabled" />
+								</h:panelGrid>
+								
+								<h:outputText value="#{lbl['gamificationSettings.label.achievementsEnabled']}" styleClass="title-text" />
+								<h:panelGrid style="width: 100%;">
+									<p:selectOneButton value="#{myCoursesBean.settings.achievementsEnabled}" id="achievementsEnabled" 
+										required="true" requiredMessage="#{msg['error.select_value']}"
+										disabled="#{!myCoursesBean.settings.gamificationEnabled}">
+										<f:selectItem itemLabel="#{lbl['general.labels.enabled']}" itemValue="true" />
+										<f:selectItem itemLabel="#{lbl['general.labels.disabled']}" itemValue="false" />
+									</p:selectOneButton>
+									<p:message for="achievementsEnabled" />
+								</h:panelGrid>
+							
+						</h:panelGrid>
+
+						<div class="input clearfix">
+							<p:commandButton update=":growl @form" oncomplete="hideModalOnSuccessWithDropdown(args,'#gamification-modal');"
+								value="#{lbl['courseList.label.updateSettings']}" styleClass="submit-input grad-btn ln-tr" actionListener="#{myCoursesBean.addOrUpdateGamificationSettings()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

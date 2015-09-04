@@ -1,0 +1,57 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.assignmentDetails.title']}</ui:define>
+
+	<ui:define name="pageTitle">#{lbl['pages.assignmentDetails.title']}</ui:define>
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#my_courses_menu_item");
+		</script>
+
+		<section class="full-section latest-courses-section no-slider">
+			<div class="container">
+				<h:panelGroup layout="block" styleClass="col-md-12" id="submissionDetailsPanel">
+					<div class="course clearfix">
+						<div class="course-info">
+							<h3 class="course-title large-course-title ln-tr">#{assignmentDetailsBean.assignment.name}</h3>
+							<h3 class="course-title">#{lbl['assignmentManagement.label.duedate']}: #{assignmentDetailsBean.assignment.dueDateString}</h3>
+							<p class="course-description">#{assignmentDetailsBean.assignment.description}</p>
+							
+							<h:panelGroup rendered="#{assignmentDetailsBean.submissionFound}" style="margin-top:12px;" >
+								<h3 class="course-title">#{lbl['assignmentManagement.label.submissionDetails']}</h3>
+								<p class="course-description">#{lbl['document.label.filename']}: #{assignmentDetailsBean.submission.document.filename}#{assignmentDetailsBean.submission.document.filetype}</p>
+								<p class="course-description">#{lbl['document.label.fileSize']}: #{assignmentDetailsBean.submission.document.filesizeString}</p>
+								<p class="course-description">#{lbl['document.label.uploadDate']}: #{assignmentDetailsBean.submission.creationTimeString}</p>
+							</h:panelGroup>
+						</div>
+					</div>
+				</h:panelGroup>
+			</div>
+			
+			<div class="container">
+				<h:panelGroup layout="block" styleClass="col-md-12">
+					<div class="course clearfix">
+						<div class="course-info">
+								<h:form id="assignmentSubmissionForm" enctype="multipart/form-data">
+									<p:fileUpload fileUploadListener="#{assignmentDetailsBean.handleFileUpload}"  styleClass="grad-btn ln-tr horizontal-uploader"
+											style="display: inline-block; box-shadow: none; width:100%;" fileLimit="1"
+											mode="advanced" dragDropSupport="false" value="#{lbl['planManagement.label.uploadAssignmentSubmission']}"
+											update="@form :submissionDetailsPanel" multiple="false"/>
+								</h:form>
+						</div>
+					</div>
+				</h:panelGroup>
+			</div>
+		</section>
+	</ui:define>
+</ui:composition>

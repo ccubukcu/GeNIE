@@ -1,0 +1,76 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.passrecovery.title']}</ui:define>
+	
+	<ui:define name="pageTitle">#{lbl['pages.passrecovery.header']}</ui:define>
+	<ui:define name="pageDescription">#{lbl['pages.passrecovery.description']}</ui:define>
+	
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#home_menu_item");
+	    </script>
+	
+		<section class="login-page fadeInDown-animation">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="login-form">
+                            <div class="login-title">
+	                            <h:panelGroup styleClass="icon">
+                                		<i class="fa fa-group"> </i>
+                                	</h:panelGroup>
+                                
+                                    <h:outputText value="#{lbl['passrecovery.label.header']}" styleClass="text" />
+                                    <h:panelGroup layout="block" styleClass="register-text" rendered="#{userBean.validateToken(true)}">
+                                    	<h:outputText value="#{lbl['passrecovery.text.description']}" />
+                                    </h:panelGroup>
+                                    
+                                    <h:panelGroup layout="block" styleClass="register-text">
+                                    	<h:outputText style="color:#ff0000; font-weight:bold;" rendered="#{!userBean.validateToken(true)}" value="#{msg['error.passrecovery.invalidtoken']} " />
+                                    </h:panelGroup>
+                            </div><!-- End Title -->
+				
+                            <h:form id="recoveryForm" rendered="#{userBean.validateToken(true)}">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="input">
+											<p:password id="password" required="true"  requiredMessage="#{msg['error.enter_value']}" value="#{userBean.newPassword}" styleClass="password-input" placeholder="#{lbl['general.labels.password']}"/>
+          									<p:message for="password" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-12">
+                                        <div class="input">
+											<p:password id="confirmpassword" required="true"  requiredMessage="#{msg['error.enter_value']}" value="#{userBean.confirmNewPassword}" styleClass="password-input" placeholder="#{lbl['register.label.confirmpassword']}"/>
+          									<p:message for="confirmpassword" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-12">
+                                        <div class="input clearfix">
+                                        	<p:commandButton update="@form" value="#{lbl['passrecovery.label.reset']}" styleClass="submit-input grad-btn ln-tr" actionListener="#{userBean.updateUserPassword()}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="forgot fr">
+                                            <a href="signin" class="new-user">#{lbl['register.label.already_member']}</a>
+                                        </div>
+                                    </div>
+                                </div><!-- end row -->
+                            </h:form>
+                        </div><!-- end login form -->
+                    </div><!-- end col-md-8/offset -->
+                </div><!-- end row -->
+            </div><!-- end container -->
+        </section><!-- End Login Page -->
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,244 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.admin.user.title']}</ui:define>
+
+	<ui:define name="pageTitle">#{lbl['pages.admin.user.header']}</ui:define>
+	<ui:define name="pageDescription">#{lbl['pages.admin.user.description']}</ui:define>
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#user_menu_item");
+		</script>
+
+		<article class="post single">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="entry clearfix">
+           				<div class="loader section-loader user-table-loader"></div>
+						<!-- End Title -->
+
+						<h:form id="userTableForm">
+							
+							<h:panelGrid columns="3" styleClass="management-buttons" id="operations">
+								<p:commandButton update="@form :growl :modal-content" oncomplete="openModalWithDropdown('#add-modal')" actionListener="#{userManagementBean.prepareUserUpdateDialog()}"
+									value="#{lbl['general.labels.edit']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+									disabled="#{userManagementBean.userButtonsDisabled}" />
+									
+								<p:commandButton update="@form :growl :modal-content" oncomplete="openModal('#approval-modal')"
+									value="#{lbl['general.labels.delete']}" styleClass="submit-input management-button delete-button grad-btn ln-tr"
+									disabled="#{userManagementBean.userButtonsDisabled}" />
+							</h:panelGrid>
+							
+							<p:spacer height="10px"/>
+							<p:dataTable id="userTable" var="user" widgetVar="dtUserTable"
+										paginator="true" rows="10" paginatorAlwaysVisible="false"
+										emptyMessage="#{lbl['common.label.noRecordFound']}" selection="#{userManagementBean.selectedUser}"
+										value="#{userManagementBean.users}" rowKey="#{user.username}" selectionMode="single"
+										styleClass="borderless" >
+										
+										<p:ajax event="rowSelect" update=":userTableForm:operations"></p:ajax>
+										<p:ajax event="rowUnselect" update=":userTableForm:operations"></p:ajax>
+										
+								<p:column headerText="#{lbl['general.labels.username']}">
+									<h:outputText value="#{user.username}" styleClass="d" />
+								</p:column>
+								
+								<p:column headerText="#{lbl['general.labels.fullname']}">
+									<h:outputText value="#{user.fullName}" styleClass="d" />
+								</p:column>
+								
+								<p:column headerText="#{lbl['general.labels.email']}">
+									<h:outputText value="#{user.email}" styleClass="d" />
+								</p:column>
+								
+								<p:column headerText="#{lbl['schoolYear.label.semesters']}">
+									<h:outputText value="#{userManagementBean.getAuthoritiesCount(user)}" styleClass="d" />
+								</p:column>
+							</p:dataTable>
+						</h:form>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		</article>
+		
+		<div class="modal fade containing-div" id="add-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false"
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{lbl['semesterManagement.label.updateHeader']}</span>
+							
+							<p:commandLink styleClass="close-modal fr" update=":userTableForm" onclick="hideModal('#add-modal');" oncomplete="setPaginatorClasses();" actionListener="#{userManagementBean.clearSelectedUser()}">
+						        <i class="fa fa-close fa-2x"></i>
+						    </p:commandLink>
+    
+<!-- 							<a href="#" class="close-modal fr" -->
+<!-- 								data-dismiss="modal" aria-label="Close">  -->
+<!-- 						</a> -->
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="userManagementForm" styleClass="modal-dialog-form">
+						<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol">
+							<h:outputText value="#{lbl['general.labels.username']}" styleClass="title-text" />
+							<h:outputText value="#{userManagementBean.selectedUser.username}" styleClass="title-text" />
+							
+							<h:outputText value="#{lbl['general.labels.fullname']}" styleClass="title-text"/>
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="fullname" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="100"
+									value="#{userManagementBean.selectedUser.fullName}"/>
+								<p:message for="fullname" />
+							</h:panelGrid>
+							
+							<h:outputText value="#{lbl['general.labels.email']}" styleClass="title-text"/>
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="email" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="100"
+									value="#{userManagementBean.selectedUser.email}"/>
+								<p:message for="email" />
+							</h:panelGrid>
+						</h:panelGrid>
+						
+						<p:separator style="margin-top: 8px; margin-bottom: 14px;"></p:separator>
+							
+						<h:panelGrid columns="1" id="dialog-authority-management">
+							<h:outputText value="#{lbl['userManagement.label.authorities']}" styleClass="title-text" />
+							
+							<h:panelGrid columns="3" id="authority-item-selections">
+								<h:panelGrid styleClass="input-form-message-panel">
+									<p:selectOneMenu id="role-item-selection"
+										value="#{userManagementBean.selectedRole}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-dialog">
+										<p:ajax update="semester-selection" listener="#{userManagementBean.onRoleSelected()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+						                <f:selectItem itemDisabled="#{userManagementBean.roleSelected}" itemLabel="#{lbl['userManagement.label.selectRole']}"  itemValue="" noSelectionOption="true" />
+						            	<f:selectItems value="#{userManagementBean.roleSelectItems}" />
+						            </p:selectOneMenu>
+						            <p:message for="role-item-selection"/>
+					            </h:panelGrid>
+					            
+								<h:panelGrid styleClass="input-form-message-panel">
+									<p:selectOneMenu id="semester-selection" converter="semesterConverter" disabled="#{!userManagementBean.roleSelected or !userManagementBean.courseAndSemesterRequired}"
+										value="#{userManagementBean.selectedSemester}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-dialog"
+										required="#{userManagementBean.roleSelected or userManagementBean.courseAndSemesterRequired}" requiredMessage="#{msg['error.select_value']}">
+										<p:ajax update="course-selection" listener="#{userManagementBean.onSemesterSelected()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+						                <f:selectItem itemDisabled="#{userManagementBean.semesterSelected}" itemLabel="#{lbl['userManagement.label.selectSemester']}"  itemValue="" noSelectionOption="true" />
+						            	<f:selectItems value="#{userManagementBean.semesters}" var="sem" itemValue="#{sem}" itemLabel="#{sem.semesterIdentifier}" />
+						            </p:selectOneMenu>
+						            <p:message for="semester-selection"/>
+					            </h:panelGrid>
+					            
+								<h:panelGrid styleClass="input-form-message-panel">
+									<p:selectOneMenu id="course-selection" converter="courseConverter" disabled="#{!userManagementBean.semesterSelected or !userManagementBean.courseAndSemesterRequired}"
+										value="#{userManagementBean.selectedCourse}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-dialog"
+										required="#{userManagementBean.semesterSelected or userManagementBean.courseAndSemesterRequired}" requiredMessage="#{msg['error.select_value']}">
+										<p:ajax update="@form" listener="#{userManagementBean.onCourseSelect()}" oncomplete="setDropDownCarat()"/>
+						                <f:selectItem itemDisabled="#{userManagementBean.courseSelected}" itemLabel="#{lbl['userManagement.label.selectCourse']}"  itemValue="" noSelectionOption="true" />
+						                <f:selectItems value="#{userManagementBean.semesterCourses}" var="c" itemValue="#{c}" itemLabel="#{c.courseName}" />
+						            </p:selectOneMenu>
+						            <p:message for="course-selection"/>
+					            </h:panelGrid>
+				            </h:panelGrid>
+				            
+				            <h:panelGrid columns="3" styleClass="management-buttons" id="authority-operations">
+								<p:commandButton update="dialog-authority-management" actionListener="#{userManagementBean.addOrUpdateRole()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"
+									value="#{lbl['general.labels.add']}" styleClass="submit-input management-button add-button grad-btn ln-tr"
+									rendered="#{userManagementBean.authorityButtonsRendered}" />
+									
+								<p:commandButton update="dialog-authority-management" oncomplete="setDropDownCarat(); setPaginatorClasses();" actionListener="#{userManagementBean.addOrUpdateRole()}"
+									value="#{lbl['general.labels.edit']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+									rendered="#{!userManagementBean.authorityButtonsRendered}" />
+									
+								<p:commandButton update="dialog-authority-management" oncomplete="setDropDownCarat(); setPaginatorClasses();"
+									value="#{lbl['general.labels.delete']}" styleClass="submit-input management-button delete-button grad-btn ln-tr" actionListener="#{userManagementBean.deleteRole()}"
+									rendered="#{!userManagementBean.authorityButtonsRendered}" />
+									
+								<p:commandButton update="dialog-authority-management" oncomplete="setDropDownCarat(); setPaginatorClasses(); PF('dtAuthTable').unselectAllRows();" immediate="true"
+									value="#{lbl['general.labels.clear']}" styleClass="submit-input management-button clear-button grad-btn ln-tr" actionListener="#{userManagementBean.onAuthorityUnselected()}">
+									<p:resetInput target="dialog-authority-management"></p:resetInput>
+								</p:commandButton>
+									
+							</h:panelGrid>
+							
+				            <p:spacer height="10px"/>
+							<p:dataTable id="authority-table" var="auth" widgetVar="dtAuthTable"
+										paginator="true" rows="5" paginatorAlwaysVisible="false"
+										emptyMessage="#{lbl['common.label.noRecordFound']}" selection="#{userManagementBean.selectedAuthority}"
+										value="#{userManagementBean.userAuthorities}" rowKey="#{auth.id}" selectionMode="single"
+										styleClass="borderless" >
+										
+										<p:ajax event="rowSelect" update=":userManagementForm:authority-item-selections :userManagementForm:authority-operations" 
+											listener="#{userManagementBean.onAuthoritySelected()}" oncomplete="setDropDownCarat();"></p:ajax>
+										<p:ajax event="rowUnselect" update=":userManagementForm:authority-item-selections :userManagementForm:authority-operations"
+											listener="#{userManagementBean.onAuthorityUnselected()}" oncomplete="setDropDownCarat();"></p:ajax>
+										
+								<p:column headerText="#{lbl['general.labels.username']}">
+									<h:outputText value="#{auth.authority}" styleClass="d" />
+								</p:column>
+								
+								<p:column headerText="#{lbl['general.labels.fullname']}">
+									<h:outputText value="#{auth.courseId}" styleClass="d" />
+								</p:column>
+								
+								<p:column headerText="#{lbl['general.labels.email']}">
+									<h:outputText value="#{auth.semesterId}" styleClass="d" />
+								</p:column>
+								
+							</p:dataTable>
+				            
+						</h:panelGrid>
+						
+						<p:separator style="margin-top: 20px; margin-bottom: 8px;"></p:separator>
+						
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :userTableForm:userTable :userTableForm:operations" oncomplete="hideModalOnSuccess(args,'#add-modal');"
+								value="#{lbl['userManagement.labels.editUser']}" styleClass="submit-input grad-btn ln-tr edit-button" actionListener="#{userManagementBean.updateUser()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+		</div>
+			
+		<div class="modal fade" id="approval-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-trash-o fa-lg fa-lh-1"></i></span>
+						<span class="text">#{lbl['general.labels.removalConfirmation']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" update=":userTableForm" onclick="hideModal('#approval-modal');" actionListener="#{userManagementBean.clearSelectedUser()}">
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<h:form id="approvalForm" styleClass="modal-dialog-form">
+						
+						<h:outputText value="#{lbl['general.labels.removalNotice']}" styleClass="title-text" />
+
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :userTableForm:userTable :userTableForm:operations" process="@form" oncomplete="hideModal('#approval-modal');"
+								value="#{lbl['general.labels.delete']}" styleClass="submit-input grad-btn ln-tr delete-button" actionListener="#{userManagementBean.deleteUser()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+			<!-- End Dialog -->
+		</div>
+		<!-- End Login Modal -->
+	</ui:define>
+</ui:composition>

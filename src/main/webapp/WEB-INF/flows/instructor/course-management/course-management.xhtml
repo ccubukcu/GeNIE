@@ -1,0 +1,439 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.instructor.course.title']}</ui:define>
+
+	<ui:define name="pageTitle">#{lbl['pages.instructor.course.header']}</ui:define>
+	<ui:define name="pageDescription">#{lbl['pages.instructor.course.description']}</ui:define>
+
+	<ui:define name="content">
+		<script type="text/javascript">
+			setCurrentPage("#course_menu_item");
+		</script>
+
+		<article class="post single">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="entry clearfix">
+           				<div class="loader section-loader year-table-loader"></div>
+						<!-- End Title -->
+						
+						<p:tabView id="tabView" >
+
+							<p:tab title="#{lbl['courseManagement.label.courseTab']}">
+								<h:form id="courseTableForm">
+									
+									<h:panelGrid columns="3" styleClass="management-buttons" id="course-operations">
+										<p:commandButton update="@form :growl :course-modal-content" oncomplete="openModal('#add-course-modal'); setPaginatorClasses();" actionListener="#{courseManagementBean.prepareAddCourseDialog()}"
+											value="#{lbl['general.labels.add']}" styleClass="submit-input management-button add-button grad-btn ln-tr" />
+											
+										<p:commandButton update="@form :growl :course-modal-content" oncomplete="openModal('#add-course-modal'); setPaginatorClasses();" actionListener="#{courseManagementBean.prepareUpdateCourseDialog()}"
+											value="#{lbl['general.labels.edit']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+											disabled="#{courseManagementBean.courseButtonsDisabled}" />
+											
+										<p:commandButton update="@form :growl" oncomplete="openModal('#course-approval-modal')"
+											value="#{lbl['general.labels.delete']}" styleClass="submit-input management-button delete-button grad-btn ln-tr"
+											disabled="#{courseManagementBean.courseDeleteDisabled}" />
+									</h:panelGrid>
+									
+									<p:spacer height="10px"/>
+									<p:dataTable id="crTable" var="cr" widgetVar="dtCourseTable"
+												paginator="true" rows="10" paginatorAlwaysVisible="false"
+												emptyMessage="#{lbl['common.label.noRecordFound']}" selection="#{courseManagementBean.selectedCourse}"
+												value="#{courseManagementBean.courses}" rowKey="#{cr.id}" selectionMode="single"
+												styleClass="borderless" >
+												
+												<p:ajax event="rowSelect" update=":tabView:courseTableForm:course-operations"></p:ajax>
+												<p:ajax event="rowUnselect" update=":tabView:courseTableForm:course-operations"></p:ajax>
+												
+										<p:column headerText="#{lbl['course.label.courseName']}">
+											<h:outputText value="#{cr.courseName}" styleClass="d" />
+										</p:column>
+										
+										<p:column headerText="#{lbl['course.label.courseCode']}">
+											<h:outputText value="#{cr.courseIdentifier}" styleClass="d" />
+										</p:column>
+													
+										<p:column headerText="#{lbl['course.label.shortDesc']}">
+											<h:outputText id ="short-desc" value="#{courseManagementBean.getDescriptionForTooltip(cr.shortDescription)}"/>
+											<p:tooltip for="short-desc" value="#{cr.shortDescription}" styleClass="tooltips"/>
+										</p:column>
+													
+										<p:column headerText="#{lbl['course.label.longDesc']}">
+											<h:outputText id ="long-desc" value="#{courseManagementBean.getDescriptionForTooltip(cr.longDescription)}"/>
+											<p:tooltip for="long-desc" value="#{cr.longDescription}" styleClass="tooltips"/>
+										</p:column>
+										
+										<p:column headerText="#{lbl['schoolYear.label.semesters']}">
+											<h:outputText value="#{cr.semesterCourses.size()}" styleClass="d" />
+										</p:column>
+									</p:dataTable>
+								</h:form>
+							</p:tab>
+							
+						
+						<p:tab title="#{lbl['courseManagement.label.semCourseTab']}">
+							<h:form id="semCourseTableForm">
+									
+								<h:panelGrid columns="4" styleClass="management-buttons" id="sem-course-operations">
+									<p:commandButton update="@form :growl :sem-course-modal-content" oncomplete="openModalWithDropdown('#add-sem-course-modal');" actionListener="#{courseManagementBean.prepareAddSemesterCourseDialog()}"
+										value="#{lbl['general.labels.add']}" styleClass="submit-input management-button add-button grad-btn ln-tr" />
+										
+									<p:commandButton update="@form :growl :sem-course-modal-content" oncomplete="openModalWithDropdown('#add-sem-course-modal');" actionListener="#{courseManagementBean.prepareUpdateSemesterCourseDialog()}"
+										value="#{lbl['general.labels.edit']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+										disabled="#{courseManagementBean.semesterCourseButtonsDisabled}" />
+										
+									<p:commandButton update="@form :growl :grade-modal-content" oncomplete="openModalWithDropdown('#grade-modal');" actionListener="#{courseManagementBean.prepareCriteriaDialog()}"
+										value="#{lbl['general.labels.grading']}" styleClass="submit-input management-button edit-button grad-btn ln-tr"
+										disabled="#{courseManagementBean.semesterCourseButtonsDisabled}" />
+										
+									<p:commandButton update="@form :growl" oncomplete="openModal('#sem-course-approval-modal')"
+										value="#{lbl['general.labels.delete']}" styleClass="submit-input management-button delete-button grad-btn ln-tr"
+										disabled="#{courseManagementBean.semesterCourseButtonsDisabled}" />
+								</h:panelGrid>
+								
+								<p:spacer height="10px"/>
+									<p:dataTable id="scTable" var="sc" widgetVar="dtSemCourseTable"
+												paginator="true" rows="10" paginatorAlwaysVisible="false"
+												emptyMessage="#{lbl['common.label.noRecordFound']}" selection="#{courseManagementBean.selectedSemesterCourse}"
+												value="#{courseManagementBean.semesterCourses}" rowKey="#{sc.id}" selectionMode="single"
+												styleClass="borderless" >
+												
+												<p:ajax event="rowSelect" update=":tabView:semCourseTableForm:sem-course-operations"></p:ajax>
+												<p:ajax event="rowUnselect" update=":tabView:semCourseTableForm:sem-course-operations"></p:ajax>
+												
+											<p:column headerText="#{lbl['general.labels.yearIdentifier']}">
+												<h:outputText value="#{sc.semester.schoolYear.yearIdentifier}" styleClass="d" />
+											</p:column>
+											
+											<p:column headerText="#{lbl['general.labels.semesterIdentifier']}">
+												<h:outputText value="#{sc.semester.semesterIdentifier}" styleClass="d" />
+											</p:column>
+											
+											<p:column headerText="#{lbl['general.labels.courseName']}">
+												<h:outputText value="#{sc.course.courseName}" styleClass="d" />
+											</p:column>
+											
+											<p:column headerText="#{lbl['course.label.enrollmentKey']}">
+												<h:outputText value="#{sc.enrollmentKey}" styleClass="d" />
+											</p:column>
+											
+											<p:column headerText="#{lbl['general.labels.gradeCriteria']}">
+												<ui:repeat var="gc" value="#{courseManagementBean.stringifyGradeCriteria(sc)}">
+													<h:outputText value="#{gc}" />
+													<br />
+												</ui:repeat>
+											</p:column>
+									</p:dataTable>
+							</h:form>
+						
+						</p:tab>
+						</p:tabView>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		</article>
+		
+		<div class="modal fade containing-div" id="add-course-modal" tabindex="-1" role="dialog" data-backdrop="static"  data-keyboard="false"
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="course-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{courseManagementBean.dialogHeader}</span>
+							
+							<p:commandLink styleClass="close-modal fr" update=":tabView:courseTableForm" onclick="hideModal('#add-course-modal');" oncomplete="setPaginatorClasses();" actionListener="#{courseManagementBean.clearSelectedCourse()}">
+						        <i class="fa fa-close fa-2x"></i>
+						    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="courseManagementForm" styleClass="modal-dialog-form">
+						<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol" styleClass="full-width-grid">
+							
+							<h:outputText value="#{lbl['course.label.courseName']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="coursename" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="100"
+									value="#{courseManagementBean.selectedCourse.courseName}"/>
+								<p:message for="coursename" />
+							</h:panelGrid>
+							
+							<h:outputText value="#{lbl['course.label.courseCode']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="code" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="100"
+									value="#{courseManagementBean.selectedCourse.courseIdentifier}"/>
+								<p:message for="code" />
+							</h:panelGrid>
+							
+						</h:panelGrid>
+						
+						<h:outputText value="#{lbl['course.label.shortDesc']}" styleClass="title-text" style="margin-top: 8px; display:block;"/>
+						<h:outputText id="shortDesc" value="#{lbl['courseManagement.label.shortDescInfo']}" styleClass="regular-body-text" />
+						<p:inputTextarea maxlength="500" autoResize="false" value="#{courseManagementBean.selectedCourse.shortDescription}"/>
+						
+						<h:outputText value="#{lbl['course.label.longDesc']}" styleClass="title-text" style="margin-top: 8px; display:block;"/>
+						<h:outputText id="longDesc" value="#{lbl['courseManagement.label.longDescInfo']}" styleClass="regular-body-text" />
+						<p:inputTextarea maxlength="5000" autoResize="false" value="#{courseManagementBean.selectedCourse.longDescription}"/>
+
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :tabView:courseTableForm:crTable :tabView:courseTableForm:course-operations :tabView:semCourseTableForm" oncomplete="hideModalOnSuccess(args,'#add-course-modal');"
+								value="#{courseManagementBean.dialogButtonLabel}" styleClass="#{courseManagementBean.dialogButtonClass}" actionListener="#{courseManagementBean.addOrUpdateCourse()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+		</div>
+		
+		<div class="modal fade containing-div" id="add-sem-course-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" 
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="sem-course-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{courseManagementBean.semCourseDialogHeader}</span>
+							
+						<p:commandLink styleClass="close-modal fr" update=":tabView:semCourseTableForm" onclick="hideModal('#add-sem-course-modal');" actionListener="#{courseManagementBean.clearSelectedSemesterCourse()}">
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="semCourseManagementForm" styleClass="modal-dialog-form">
+						<h:panelGrid columns="2" columnClasses="panelGrid-leftCol, panelGrid-rightCol" styleClass="full-width-grid">
+							<h:outputText value="#{lbl['general.labels.academicYear']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:selectOneMenu id="schoolyear" converter="schoolYearConverter" required="true" requiredMessage="#{msg['error.select_value']}"
+									value="#{courseManagementBean.selectedYear}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="dialog-dropdown" disabled="#{courseManagementBean.updatingSemesterCourse}">
+									<p:ajax update="semester year-dates" listener="#{courseManagementBean.onYearSelected()}" oncomplete="setDropDownCarat()"/>
+					                <f:selectItem itemDisabled="#{courseManagementBean.yearSelected}" itemLabel="#{lbl['general.labels.pleaseSelect']}" itemValue="" noSelectionOption="true" />
+					                <f:selectItems value="#{courseManagementBean.years}" var="year" itemValue="#{year}" itemLabel="#{year.yearIdentifier}" />
+					            </p:selectOneMenu>
+					            <p:message for="schoolyear" />
+							</h:panelGrid>	
+							
+							<h:outputText value="#{lbl['courseManagement.label.academicYearDates']}" styleClass="title-text" />
+							<h:outputText value="#{courseManagementBean.yearDates}" id="year-dates" styleClass="title-text" />
+							
+							<h:outputText value="#{lbl['general.labels.semester']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:selectOneMenu id="semester" converter="semesterConverter" required="true" requiredMessage="#{msg['error.select_value']}"
+									value="#{courseManagementBean.selectedSemester}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="dialog-dropdown" disabled="#{courseManagementBean.updatingSemesterCourse or !courseManagementBean.yearSelected}">
+									<p:ajax update="sem-dates" listener="#{courseManagementBean.onSemesterSelected()}" oncomplete="setDropDownCarat()"/>
+					                <f:selectItem itemDisabled="#{courseManagementBean.semesterSelected}" itemLabel="#{lbl['general.labels.pleaseSelect']}" itemValue="" noSelectionOption="true" />
+					                <f:selectItems value="#{courseManagementBean.semesters}" var="sem" itemValue="#{sem}" itemLabel="#{sem.semesterIdentifier}" />
+					            </p:selectOneMenu>
+					            <p:message for="semester" />
+							</h:panelGrid>	
+								
+							<h:outputText value="#{lbl['courseManagement.label.semesterDates']}" styleClass="title-text" />
+							<h:outputText value="#{courseManagementBean.semesterDates}" id="sem-dates" styleClass="title-text" />
+							
+							
+							<h:outputText value="#{lbl['course.label.courseName']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:selectOneMenu id="course" converter="courseConverter" required="true" requiredMessage="#{msg['error.select_value']}"
+									value="#{courseManagementBean.selectedDialogCourse}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="dialog-dropdown" disabled="#{courseManagementBean.updatingSemesterCourse}">
+									<p:ajax listener="#{courseManagementBean.onDialogCourseSelected()}" oncomplete="setDropDownCarat()"/>
+					                <f:selectItem itemDisabled="#{courseManagementBean.dialogCourseSelected}" itemLabel="#{lbl['general.labels.pleaseSelect']}" itemValue="" noSelectionOption="true" />
+					                <f:selectItems value="#{courseManagementBean.courses}" var="c" itemValue="#{c}" itemLabel="#{c.courseName}" />
+					            </p:selectOneMenu>
+					            <p:message for="course" />
+							</h:panelGrid>
+							
+							<h:outputText value="#{lbl['course.label.enrollmentKey']}" styleClass="title-text" />
+							<h:panelGrid styleClass="input-form-message-panel">
+								<p:inputText id="key" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="100"
+									value="#{courseManagementBean.selectedSemesterCourse.enrollmentKey}"/>
+								<p:message for="key" />
+							</h:panelGrid>			
+						</h:panelGrid>
+						
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :tabView:semCourseTableForm" oncomplete="hideModalOnSuccess(args,'#add-sem-course-modal');"
+								value="#{courseManagementBean.semCourseDialogButtonLabel}" styleClass="#{courseManagementBean.semCourseDialogButtonClass}" actionListener="#{courseManagementBean.addOrUpdateSemesterCourse()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+		</div>
+		
+		<div class="modal fade containing-div" id="grade-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" 
+			aria-hidden="true">
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content" id="grade-modal-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-pencil-square-o fa-lg fa-lh-2"></i></span>
+						<span class="text">#{lbl['courseManagement.label.grading']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" update=":tabView:semCourseTableForm" onclick="hideModal('#grade-modal');" actionListener="#{courseManagementBean.clearSelectedSemesterCourse()}">
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+           				
+					<h:form id="gradeManagementForm" styleClass="modal-dialog-form">
+						
+						<h:panelGrid columns="1" id="dialog-criteria-management">
+<!-- 							<h:outputText value="#{lbl['userManagement.label.gradingCriterias']}" styleClass="title-text" /> -->
+							
+							<h:panelGrid columns="3" id="criteria-item-selections" styleClass="top-aligned-table">
+								<h:panelGrid styleClass="input-form-message-panel">
+									<p:selectOneMenu id="gc-item-selection" required="true" requiredMessage="#{msg['error.select_value']}"
+										value="#{courseManagementBean.selectedCriteria.gradingCriteria}" panelStyleClass="foremost-ui-selectonemenu-panel" styleClass="filter-dropdown-dialog">
+										<p:ajax update="@this" listener="#{courseManagementBean.onGradingCriteriaSelected()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"/>
+						                <f:selectItem itemDisabled="#{courseManagementBean.gradingCriteriaSelected}" itemLabel="#{lbl['courseManagement.label.selectCriteria']}"  itemValue="" noSelectionOption="true" />
+						            	<f:selectItems value="#{courseManagementBean.gradingCriteriaItems}" />
+						            </p:selectOneMenu>
+						            <p:message for="gc-item-selection"/>
+					            </h:panelGrid>
+					            
+								<h:panelGrid styleClass="input-form-message-panel">
+									<p:inputText id="critname" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="100" styleClass="dialog-filter-input-middle"
+										value="#{courseManagementBean.selectedCriteria.name}" placeholder="#{lbl['course.label.criteriaName']}">
+									</p:inputText>
+									<p:message for="critname" />
+								</h:panelGrid>
+					            
+								<h:panelGrid styleClass="input-form-message-panel">
+									<p:inputText id="critweight" required="true" requiredMessage="#{msg['error.enter_value']}" maxlength="3" styleClass="dialog-filter-input"
+										value="#{courseManagementBean.selectedCriteria.weight}" placeholder="#{lbl['course.label.criteriaWeight']}">
+										<f:validateLongRange minimum="1" maximum="100"  />
+									</p:inputText>
+									<p:message for="critweight" />
+								</h:panelGrid>
+				            </h:panelGrid>
+						
+							<h:panelGrid columns="3" styleClass="management-buttons" id="criteria-operations">
+								<p:commandButton id="addCritButton" update="@form" actionListener="#{courseManagementBean.addOrUpdateCriteria()}" oncomplete="setDropDownCarat(); setPaginatorClasses();"
+									value="#{lbl['general.labels.add']}" styleClass="submit-input management-button add-button grad-btn ln-tr" process="@this :gradeManagementForm:critname :gradeManagementForm:critweight"
+									rendered="#{courseManagementBean.criteriaButtonsRendered}" />
+									
+								<p:commandButton update="dialog-criteria-management" oncomplete="setDropDownCarat(); setPaginatorClasses();" actionListener="#{courseManagementBean.addOrUpdateCriteria()}"
+									value="#{lbl['general.labels.edit']}" styleClass="submit-input management-button edit-button grad-btn ln-tr" process="@this :gradeManagementForm:critname :gradeManagementForm:critweight"
+									rendered="#{!courseManagementBean.criteriaButtonsRendered}" />
+									
+								<p:commandButton update="dialog-criteria-management" oncomplete="setDropDownCarat(); setPaginatorClasses();" process="@this :gradeManagementForm:critname :gradeManagementForm:critweight"
+									value="#{lbl['general.labels.delete']}" styleClass="submit-input management-button delete-button grad-btn ln-tr" actionListener="#{courseManagementBean.deleteCriteria()}"
+									rendered="#{!courseManagementBean.criteriaButtonsRendered}" />
+									
+								<p:commandButton update="@form" oncomplete="setDropDownCarat(); setPaginatorClasses(); PF('dtCritTable').unselectAllRows();" immediate="true"
+									value="#{lbl['general.labels.clear']}" styleClass="submit-input management-button clear-button grad-btn ln-tr" actionListener="#{courseManagementBean.onCriteriaUnselected()}">
+									<p:resetInput target="dialog-criteria-management"></p:resetInput>
+								</p:commandButton>
+									
+							</h:panelGrid>
+								
+				            <p:spacer height="10px"/>
+							<p:dataTable id="criteria-table" widgetVar="dtCritTable" tableStyleClass="content-fitting-table"
+										paginator="true" rows="10" paginatorAlwaysVisible="false"
+										emptyMessage="#{lbl['common.label.noRecordFound']}" selection="#{courseManagementBean.selectedCriteria}"
+										value="#{courseManagementBean.gradeCriteria}" var="crit" rowKey="#{crit.id}" selectionMode="single"
+										styleClass="borderless" >
+										
+										<p:ajax event="rowSelect" update=":gradeManagementForm:criteria-operations :gradeManagementForm:criteria-item-selections" 
+											listener="#{courseManagementBean.onCriteriaSelected()}" oncomplete="setDropDownCarat();"></p:ajax>
+										<p:ajax event="rowUnselect" update=":gradeManagementForm:criteria-operations :gradeManagementForm:criteria-item-selections"
+											listener="#{courseManagementBean.onCriteriaUnselected()}" oncomplete="setDropDownCarat();"></p:ajax>
+										
+								<p:column headerText="#{lbl['course.label.criteriaName']}">
+									<h:outputText value="#{crit.name}" styleClass="d" />
+								</p:column>
+								
+								<p:column headerText="#{lbl['course.label.criteriaType']}">
+									<h:outputText value="#{courseManagementBean.getGradingCriteriaName(crit.gradingCriteria)}" styleClass="d" />
+								</p:column>
+								
+								<p:column headerText="#{lbl['course.label.criteriaWeight']}">
+									<h:outputText value="#{crit.weight}" styleClass="d" />
+								</p:column>
+								
+							</p:dataTable>
+				        </h:panelGrid>    
+						
+						<div class="input clearfix">
+							<p:commandButton update="@form :tabView:semCourseTableForm:scTable :tabView:semCourseTableForm:sem-course-operations" oncomplete="hideModal('#grade-modal');"
+								value="#{lbl['general.labels.close']}" styleClass="submit-input management-button clear-button grad-btn ln-tr" immediate="true">
+								<p:resetInput target="dialog-criteria-management"></p:resetInput>
+							</p:commandButton>
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+		</div>
+			
+		<div class="modal fade" id="course-approval-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" >
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-trash-o fa-lg fa-lh-1"></i></span>
+						<span class="text">#{lbl['courseList.labels.unenrollConfirmation']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" update=":tabView:courseTableForm" onclick="hideModal('#course-approval-modal');" actionListener="#{courseManagementBean.clearSelectedCourse()}">
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<h:form id="courseApprovalForm" styleClass="modal-dialog-form">
+						
+						<h:outputText value="#{lbl['general.labels.removalNotice']}" styleClass="title-text" />
+
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :tabView:courseTableForm:crTable :tabView:courseTableForm:course-operations" process="@form" oncomplete="hideModal('#course-approval-modal');"
+								value="#{lbl['general.labels.delete']}" styleClass="submit-input grad-btn ln-tr delete-button" actionListener="#{courseManagementBean.deleteCourse()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+		</div>
+			
+		<div class="modal fade" id="sem-course-approval-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" >
+			<div class="modal-dialog container">
+				<h:panelGroup layout="block" styleClass="popup-content">
+					<div class="modal-title">
+						<span class="icon"><i class="fa fa-trash-o fa-lg fa-lh-1"></i></span>
+						<span class="text">#{lbl['courseList.labels.unenrollConfirmation']}</span>
+							
+						<p:commandLink styleClass="close-modal fr" update=":tabView:semCourseTableForm" onclick="hideModal('#sem-course-approval-modal');" actionListener="#{courseManagementBean.clearSelectedSemesterCourse()}">
+					        <i class="fa fa-close fa-2x"></i>
+					    </p:commandLink>
+					</div>
+					
+					<p:separator style="margin-top: 40px; margin-bottom: 12px;"></p:separator>
+					
+					<h:form id="semCourseApprovalForm" styleClass="modal-dialog-form">
+						
+						<h:outputText value="#{lbl['general.labels.removalNotice']}" styleClass="title-text" />
+
+						<div class="input clearfix">
+							<p:commandButton update="@form :growl :tabView:semCourseTableForm:scTable :tabView:semCourseTableForm:sem-course-operations" process="@form" oncomplete="hideModal('#sem-course-approval-modal');"
+								value="#{lbl['general.labels.delete']}" styleClass="submit-input grad-btn ln-tr delete-button" actionListener="#{courseManagementBean.deleteSemesterCourse()}" />
+						</div>
+					</h:form>
+				</h:panelGroup>
+				<!-- End Modal Content -->
+			</div>
+			<!-- End Dialog -->
+		</div>
+		<!-- End Login Modal -->
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,80 @@
+
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:appcc="http://java.sun.com/jsf/composite/components"
+	template="/WEB-INF/layouts/template.xhtml">
+
+	<ui:define name="title">#{lbl['pages.login.title']}</ui:define>
+	
+	<ui:define name="pageTitle">#{lbl['pages.login.header']}</ui:define>
+	<ui:define name="pageDescription">#{lbl['pages.login.description']}</ui:define>
+	
+	<ui:define name="content">
+		<script type="text/javascript">
+	    	setCurrentPage("#home_menu_item");
+	    </script>
+	
+		<section class="login-page fadeInDown-animation">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="login-form">
+                            <div class="login-title">
+                               	<h:panelGroup styleClass="icon">
+                               		<i class="fa fa-group"> </i>
+                               	</h:panelGroup>
+                               
+                                <h:outputText value="#{lbl['login.label.header']}" styleClass="text" />
+                                <h:panelGroup layout="block" styleClass="login-text">
+                                	<h:outputText value="#{lbl['login.text.description']}" />
+                                </h:panelGroup>
+                            </div><!-- End Title -->
+				
+                            <h:form id="signinForm">
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6" style="z-index: 2;">
+                                        <div class="input">
+											<p:inputText id="username" required="true" requiredMessage="#{msg['error.enter_value']}" value="#{userBean.username}" styleClass="username-input" placeholder="#{lbl['general.labels.username']}"/>
+            								<p:message for="username" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 col-sm-6" style="z-index: 2;">
+                                        <div class="input">
+											<p:password id="password" required="true"  requiredMessage="#{msg['error.enter_value']}" value="#{userBean.password}" styleClass="password-input" placeholder="#{lbl['general.labels.password']}"/>
+          									<p:message for="password" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-12">
+                                        <div class="input clearfix">
+                                        	<p:commandButton update="@form" value="#{lbl['general.labels.signin']}" styleClass="submit-input grad-btn ln-tr" actionListener="#{userBean.userSignIn()}"/>
+                                        </div>
+                                    </div>
+                                    <!-- 
+                                    <div class="col-md-6 col-sm-6 clearfix">
+                                        <div class="custom-checkbox fl">
+                                            <input type="checkbox" id="login_remember" class="checkbox-input" checked="checked" />
+                                            <label for="login_remember">#{lbl['login.label.rememberpassword']}</label>
+                                        </div>
+                                    </div> -->
+                                    
+                                    <div class="col-md-12">
+                                        <div class="forgot fr">
+                                            <a href="register" class="new-user">#{lbl['login.label.newuser']}</a> / <a href="forgotpass" class="reset">#{lbl['login.label.forgotpassword']}</a>
+                                        </div>
+                                    </div>
+                                </div><!-- end row -->
+                            </h:form>
+                        </div><!-- end login form -->
+                    </div><!-- end col-md-8/offset -->
+                </div><!-- end row -->
+            </div><!-- end container -->
+        </section><!-- End Login Page -->
+	</ui:define>
+</ui:composition>

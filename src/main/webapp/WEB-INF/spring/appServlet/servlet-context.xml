@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:faces="http://www.springframework.org/schema/faces" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/faces http://www.springframework.org/schema/faces/spring-faces-2.4.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+	<!--
+		DispatcherServlet Context: defines this servlet's request-processing infrastructure
+	-->
+
+	<!-- Imports user-defined @Controller beans that process client requests -->
+	<import resource="controllers.xml" />
+	<import resource="webflow.xml" />
+	<import resource="scheduler.xml" />
+
+
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<mvc:annotation-driven />
+
+	<!-- 
+		Enable serving of classpath with Spring 3 resource serving mechanism. For example:
+		/webflow-primefaces-showcase/app/resources/styles/blueprint/print.css
+	-->
+	<mvc:resources location="/" mapping="/resources/**" />
+
+	<!-- 
+		Enable processing of JSF 2 resource requests. For example:
+		/webflow-primefaces-showcase/app/javax.faces.resource/jsf.js?ln=javax.faces
+	-->
+	<faces:resources />
+	
+	<!--
+		Resolves views selected for rendering by @Controllers to .xhtml
+		resources in the /WEB-INF/views directory
+	-->
+	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass" value="org.springframework.faces.mvc.JsfView" />
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".xhtml" />
+	</bean>
+	
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="alwaysUseFullPath" value="true" />
+        <property name="mappings">
+            <value>/app/**/**=flowController</value>
+        </property>
+    </bean>
+
+    <bean name="flowController" class="org.springframework.webflow.mvc.servlet.FlowController">
+        <property name="flowExecutor" ref="flowExecutor" />
+        <property name="flowUrlHandler" ref="customDefaultUrlhandler" />
+    </bean>
+
+    <bean id="customDefaultUrlhandler" class="com.genie.utils.CustomDefaultFlowUrlHandler"/>
+	
+	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
+		<property name="flowExecutor" ref="flowExecutor"/>
+	</bean>
+	
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<property name="defaultLocale" value="en" />
+	</bean>
+ 
+	<bean id="localeChangeInterceptor"
+		class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+		<property name="paramName" value="language" />
+	</bean>
+ 
+	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" >
+		<property name="interceptors">
+		   <list>
+			<ref bean="localeChangeInterceptor" />
+		   </list>
+		</property>
+	</bean>
+	
+	<bean id="afterLoadControllerBean" class="com.genie.beans.AfterLoadControllerBean"/>
+</beans>

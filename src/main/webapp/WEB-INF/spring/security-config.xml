@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+
+	<global-method-security secured-annotations="enabled" />
+
+	<http pattern="/app/home*" security="none" />
+	<http pattern="/app/error/*" security="none" />
+	<http pattern="/app/signin" security="none" />
+	<http pattern="/app/register" security="none" />
+	
+	<http pattern="/styles/**" security="none"/>
+	<http pattern="/javax.faces.*/**" security="none" />
+	<http pattern="/access-denied.html" security="none" />
+	
+	<beans:bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
+
+	<beans:bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener" />
+
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:ref bean="roleVoter" />
+				<beans:ref bean="authenticatedVoter" />
+			</beans:list>
+		</beans:constructor-arg>
+
+	</beans:bean>
+	
+	<http disable-url-rewriting="true"  
+		entry-point-ref="authenticationEntryPoint" access-decision-manager-ref="accessDecisionManager">
+		
+		<anonymous />
+		
+		<logout logout-url="/app/logout" logout-success-url="/app/main" />
+		
+		<intercept-url pattern="/app/settings" access="ROLE_AUTHENTICATED_USER, ROLE_STUDENT, ROLE_INSTRUCTOR, ROLE_ADMINISTRATOR" />
+		<intercept-url pattern="/app/user-profile" access="ROLE_AUTHENTICATED_USER, ROLE_STUDENT, ROLE_INSTRUCTOR, ROLE_ADMINISTRATOR" />
+		
+		<intercept-url pattern="/app/admin/*" access="ROLE_ADMINISTRATOR" />
+		<intercept-url pattern="/app/instructor/*" access="ROLE_INSTRUCTOR" />
+		
+		<intercept-url pattern="/app/course-details" access="ROLE_STUDENT" />
+		<intercept-url pattern="/app/course-list" access="ROLE_STUDENT" />
+		<intercept-url pattern="/app/my-courses" access="ROLE_STUDENT" />
+		<intercept-url pattern="/app/assignment-details" access="ROLE_STUDENT" />
+	</http>
+
+	<beans:bean id="myUserDetailsService" class="com.genie.security.MyUserDetailsService" >
+	</beans:bean>
+	
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider user-service-ref="myUserDetailsService" >
+		</authentication-provider>
+	</authentication-manager>
+	
+	<beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter">
+		<beans:property name="rolePrefix" value="ROLE_" />
+	</beans:bean>
+
+	<beans:bean id="authenticatedVoter" class="org.springframework.security.access.vote.AuthenticatedVoter" />
+
+</beans:beans>
